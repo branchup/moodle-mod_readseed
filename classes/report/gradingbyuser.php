@@ -15,7 +15,7 @@ class gradingbyuser extends basereport
 {
 
     protected $report="gradingbyuser";
-    protected $fields = array('id','audiofile','wpm','accuracy_p','grade_p','grader','timecreated','gradenow','deletenow');
+    protected $fields = array('id','audiofile','wpm','accuracy_p','grade_p','quiz','grader','timecreated','gradenow','deletenow');
     protected $headingdata = null;
     protected $qcache=array();
     protected $ucache=array();
@@ -61,6 +61,10 @@ class gradingbyuser extends basereport
                 }else {
                     $ret = $record->wpm;
                 }
+                break;
+
+            case 'quiz':
+                $ret = $record->qanswer1 . '|' . $record->qanswer2 . '|' . $record->qanswer3 . '|' . $record->qanswer4 . '|' . $record->qanswer5;
                 break;
 
             //accuracy could hold either human or ai data
