@@ -15,7 +15,7 @@ class attempts extends basereport
 {
 
     protected $report="attempts";
-    protected $fields = array('id','username','audiofile','wpm','accuracy_p','grade_p','timecreated','deletenow');
+    protected $fields = array('id','username','audiofile','wpm','accuracy_p','grade_p','quiz','timecreated','deletenow');
     protected $headingdata = null;
     protected $qcache=array();
     protected $ucache=array();
@@ -51,6 +51,10 @@ class attempts extends basereport
 
             case 'wpm':
                 $ret = $record->wpm;
+                break;
+
+            case 'quiz':
+                $ret = $record->qanswer1 . '|' . $record->qanswer2 . '|' . $record->qanswer3 . '|' . $record->qanswer4 . '|' . $record->qanswer5;
                 break;
 
             case 'accuracy_p':

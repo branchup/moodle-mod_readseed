@@ -77,11 +77,12 @@ function process_quizresults($modulecontext,$readseed,$quizresults,$attemptid)
     if($attempt) {
         $useresults = json_decode($quizresults);
         //more data here
-        $attempt->qanswer1=$useresults->qanswer1;
-        $attempt->qanswer2=$useresults->qanswer2;
-        $attempt->qanswer3=$useresults->qanswer3;
-        $attempt->qanswer4=$useresults->qanswer4;
-        $attempt->qtextanswer1=$useresults->qtextanswer1;
+        if(isset($useresults->qanswer1)){$attempt->qanswer1=$useresults->qanswer1;}
+        if(isset($useresults->qanswer2)){$attempt->qanswer2=$useresults->qanswer2;}
+        if(isset($useresults->qanswer3)){$attempt->qanswer3=$useresults->qanswer3;}
+        if(isset($useresults->qanswer4)){$attempt->qanswer4=$useresults->qanswer4;}
+        if(isset($useresults->qanswer5)){$attempt->qanswer5=$useresults->qanswer5;}
+        if(isset($useresults->qtextanswer1)){$attempt->qtextanswer1=$useresults->qtextanswer1;}
         $result = $DB->update_record(constants::M_USERTABLE, $attempt);
         if(!$result){
             $message = 'unable to update attempt record';

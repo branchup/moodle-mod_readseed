@@ -345,3 +345,4 @@ $string['correct'] = 'Correct';
 $string['avgcorrect'] = 'Av. Correct';
 $string['avgtotaltime'] = 'Av. Duration';
 $string['nodataavailable'] = 'No data available';
+$string['quiz'] = 'Quiz';

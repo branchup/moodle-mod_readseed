@@ -51,7 +51,7 @@ This file is to manage the quiz stage
         register_events: function() {
             var dd = this;
             $('.' + this.submitbuttonclass).on('click',function(){
-                var quizresults = {"qanswer1": "1","qanswer2": "2","qanswer3": "3","qanswer4": "4","qtextanswer1": "abc"};
+                var quizresults = {"qanswer1": "1","qanswer2": "2","qanswer3": "3","qanswer4": "4","qanswer5": "1","qtextanswer1": "abc"};
                 dd.send_quizresults(quizresults);
             });
         },
