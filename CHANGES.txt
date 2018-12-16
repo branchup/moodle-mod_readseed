@@ -1,0 +1,2 @@
+Version 1.0.0 (Build 2018120900)
+-initial commit of Read Seed (starting from)
