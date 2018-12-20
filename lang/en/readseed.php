@@ -346,3 +346,4 @@ $string['avgcorrect'] = 'Av. Correct';
 $string['avgtotaltime'] = 'Av. Duration';
 $string['nodataavailable'] = 'No data available';
 $string['quiz'] = 'Quiz';
+$string['passagepicture']='Passage picture';

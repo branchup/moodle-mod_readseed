@@ -12,10 +12,11 @@ This file is to manage the quiz stage
         controls: {},
         submitbuttonclass: 'mod_readseed_quizsubmitbutton',
 
-        init: function(quizcontainer,quizdata,cmid,attemptid){
+        init: function(quizcontainer,quizdata,cmid,attemptid,passagepictureurl){
             this.quizdata=quizdata;
             this.controls.quizcontainer=quizcontainer;
             this.attemptid=attemptid;
+            this.passagepictureurl=passagepictureurl;
             this.cmid=cmid;
             this.prepare_html();
             this.register_events();
@@ -27,6 +28,10 @@ This file is to manage the quiz stage
             var text_answer_template = '<span>A: @@DATA@@</span><br>';
             var audio_answer_template = '<span><i>A: [ AUDIO RECORDER GOES HERE ] </i></span><br>';
             var submitbutton = '<button type="button" class="'+ this.submitbuttonclass +'">Submit Quiz</button><br>';
+            var passagepicture = '<span><img src="' + this.passagepictureurl + '"></img></span><br>';
+            //shoe passage picture
+            dd.controls.quizcontainer.append(passagepicture);
+
             $.each(this.quizdata,function(index,item){
                 var question =qtemplate.replace('@@DATA@@',item.text);
                 question = question.replace('@@INDEX@@',index +1)
@@ -45,6 +50,7 @@ This file is to manage the quiz stage
                         dd.controls.quizcontainer.append(text_answer_template.replace('@@DATA@@', item.answer4));
                 }
             });
+
             dd.controls.quizcontainer.append(submitbutton);
         },
 
@@ -75,9 +81,16 @@ This file is to manage the quiz stage
                         log.debug('NOT GOOD attempt quiz submission  response');
                     }
                  //let our parent class know about the submission
-                 that.onSubmit();
+                    var payload = xhr.responseText;
+                    var payloadobject = JSON.parse(payload);
+                    if(payloadobject) {
+                        that.onSubmit(payloadobject);
+                    }
+                    else{
+                        that.onSubmit(false);
+                    }
                 }
-            }
+            };
             //send it off
             xhr.open("POST",M.cfg.wwwroot + '/mod/readseed/ajaxhelper.php', true);
             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');

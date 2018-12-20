@@ -368,9 +368,20 @@ class renderer extends \plugin_renderer_base {
         $recopts['errorcontainer'] = constants::M_ERROR_CONTAINER;
         $recopts['allowearlyexit'] =  $moduleinstance->allowearlyexit ? true :false;
 
+
+
         //quiz data
         $comp_test =  new comprehensiontest($cm);
         $recopts['quizdata']= $comp_test->fetch_test_data_for_js();
+
+        //passage picture
+        if($moduleinstance->passagepicture) {
+            $zeroitem = new \stdClass();
+            $zeroitem->id = 0;
+            $recopts['passagepictureurl'] = $comp_test->fetch_media_url(constants::PASSAGEPICTURE_FILEAREA, $zeroitem);
+        }else{
+            $recopts['passagepictureurl'] ='';
+        }
 
         //we need a control tp hold the recorded audio URL for the reading
         $ret_html = $ret_html . \html_writer::tag('input', '', array('id' => constants::M_READING_AUDIO_URL, 'type' => 'hidden'));

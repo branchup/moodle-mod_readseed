@@ -50,6 +50,18 @@ class utils{
         return $ret;
     }
 
+    //fetch a flower item for the completed attempt
+    public static function fetch_newflower(){
+        global $CFG, $USER;
+        //TO DO
+        //implement this properly by fetching a new flower for this user
+        $flower= new \stdClass();
+        $flower->id=1;
+        $flower->name='mightyflower';
+        $flower->picurl=$CFG->wwwroot .'/mod/readseed/flowers/' . $flower->id . '/mightyflower.png';
+        return $flower;
+    }
+
     //are we willing and able to transcribe submissions?
     public static function can_transcribe($instance)
     {

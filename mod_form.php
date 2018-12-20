@@ -84,6 +84,10 @@ class mod_readseed_mod_form extends moodleform_mod {
 		$opts = array('rows'=>'15', 'columns'=>'80');
 		$mform->addElement('editor','passage_editor',get_string('passagelabel',constants::M_COMPONENT),$opts, $ednofileoptions);
 
+		//Image to accompany passage in quiz part of activity
+        $ppoptions = readseed_picturefile_options($this->context);
+        $mform->addElement('filemanager', 'passagepicture', get_string('passagepicture',constants::M_COMPONENT), null, $ppoptions);
+
 		//The alternatives declaration
         $mform->addElement('textarea','alternatives',get_string("alternatives", constants::M_COMPONENT),
             'wrap="virtual" rows="20" cols="50"');

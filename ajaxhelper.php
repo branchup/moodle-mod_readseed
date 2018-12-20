@@ -28,6 +28,7 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 
 use \mod_readseed\constants;
+use \mod_readseed\utils;
 use \mod_readseed\aigrade;
 
 $cmid = required_param('cmid',  PARAM_INT); // course_module ID, or
@@ -83,8 +84,15 @@ function process_quizresults($modulecontext,$readseed,$quizresults,$attemptid)
         if(isset($useresults->qanswer4)){$attempt->qanswer4=$useresults->qanswer4;}
         if(isset($useresults->qanswer5)){$attempt->qanswer5=$useresults->qanswer5;}
         if(isset($useresults->qtextanswer1)){$attempt->qtextanswer1=$useresults->qtextanswer1;}
+        //get users flower
+        $flower = utils::fetch_newflower();
+        if($flower) {
+            $attempt->flowerid = $flower->id;
+        }
         $result = $DB->update_record(constants::M_USERTABLE, $attempt);
-        if(!$result){
+        if($result) {
+            $returndata= $flower;
+        }else{
             $message = 'unable to update attempt record';
         }
     }else{

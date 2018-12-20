@@ -32,6 +32,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use \mod_readseed\constants;
+
 /**
  * Execute readseed upgrade from the given old version
  *
@@ -43,273 +45,24 @@ function xmldb_readseed_upgrade($oldversion) {
 
     $dbman = $DB->get_manager(); // loads ddl manager and xmldb classes
 
-
-    // Add allowearlyexit field
-    if ($oldversion < 2015071501) {
-
-        // Define field introformat to be added to readseed
-        $table = new xmldb_table('readseed');
-        $field = new xmldb_field('allowearlyexit', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-
-        // Add field introformat
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        upgrade_mod_savepoint(true, 2015071501, 'readseed');
-    }
-
-	// Add allowearlyexit field
-    if ($oldversion < 2015071502) {
-
-        // Define field grade to be added to readseed
-        $table = new xmldb_table('readseed');
-        $field = new xmldb_field('grade', XMLDB_TYPE_INTEGER, '3', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-
-        // Add field introformat
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        upgrade_mod_savepoint(true, 2015071502, 'readseed');
-    }
-	
-	// Add wcpm field
-    if ($oldversion < 2015072201) {
-
-        // Define field wpcm to be added to readseed_attempt
-        $table = new xmldb_table('readseed_attempt');
-        $field = new xmldb_field('wpm', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-
-        // Add field introformat
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        upgrade_mod_savepoint(true, 2015072201, 'readseed');
-    }
-	
-	// Add accuracy and targetwpm fields
-    if ($oldversion < 2015072701) {
-
-        // Define field wpcm to be added to readseed_attempt
-        $table = new xmldb_table('readseed_attempt');
-        $field = new xmldb_field('accuracy', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-
-        // Add field introformat
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-		
-		// Define field wpcm to be added to readseed_attempt
-        $table = new xmldb_table('readseed');
-        $field = new xmldb_field('targetwpm', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '100');
-
-        // Add field introformat
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        upgrade_mod_savepoint(true, 2015072701, 'readseed');
-    }
-    	// Rename fedbackformat to feedbackformat
-    if ($oldversion < 2016022102) {
-
-        // Define field wpcm to be added to readseed_attempt
-        $table = new xmldb_table('readseed');
-        $field = new xmldb_field('fedbackformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-
-        // Rename field to feedbackformat
-        if ($dbman->field_exists($table, $field)) {
-            $dbman->rename_field($table, $field,'feedbackformat');
-        }
-
-        upgrade_mod_savepoint(true, 2016022102, 'readseed');
-    }
-
-    if ($oldversion < 2018060900){
-        $table = new xmldb_table('readseed_ai_result');
-
-        // Adding fields to table tool_dataprivacy_contextlist.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('readseedid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('attemptid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('transcript', XMLDB_TYPE_TEXT, null, null, null, null);
-        $table->add_field('fulltranscript', XMLDB_TYPE_TEXT, null, null, null, null);
-        $table->add_field('wpm', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('accuracy', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('sessionscore', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('sessiontime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('sessionerrors', XMLDB_TYPE_TEXT, null, null, null, null);
-        $table->add_field('sessionendword', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-
-        // Adding keys to table tool_dataprivacy_contextlist.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-        // Conditionally launch create table for tool_dataprivacy_contextlist.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        $table = new xmldb_table('readseed');
-        $field = new xmldb_field('enableai', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-
-        // Add field introformat
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        upgrade_mod_savepoint(true, 2018060900, 'readseed');
-    }
-
-    // Add expiredays and region to readseed table
-    if ($oldversion < 2018060902) {
-        $table = new xmldb_table('readseed');
+    // Add passage picture to readseed table
+    if ($oldversion < 2018122000) {
+        $activitytable = new xmldb_table(constants::M_TABLE);
+        $attempttable = new xmldb_table(constants::M_USERTABLE);
 
         // Define field expiredays to be added to readseed
-        $field = new xmldb_field('expiredays', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '365');
+        $field_picture = new xmldb_field('passagepicture', XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, XMLDB_NOTNULL, null);
+        $field_flower= new xmldb_field('flowerid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
 
-        // add field to readseed table
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
+        // add picture field to readseed table
+        if (!$dbman->field_exists($activitytable, $field_picture)) {
+            $dbman->add_field($activitytable, $field_picture);
         }
-
-
-        // Define field expiredays to be added to readseed
-        $field = new xmldb_field('region', XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 'useast1');
-        // add field to readseed table
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
+        // add flower id field to readseed table
+        if (!$dbman->field_exists($attempttable, $field_flower)) {
+            $dbman->add_field($attempttable, $field_flower);
         }
-
-        upgrade_mod_savepoint(true, 2018060902, 'readseed');
-    }
-
-    // Add accadjust to readseed table
-    if ($oldversion < 2018071300) {
-        $table = new xmldb_table('readseed');
-
-        //This allows the activity admin to compensate for a certain no. of errors to compensate for machine transcription errors
-        $field = new xmldb_field('accadjust', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-
-        // add field to readseed table
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        upgrade_mod_savepoint(true, 2018071300, 'readseed');
-    }
-
-    // Add session matches to databaase
-    if ($oldversion < 2018073101) {
-        $table = new xmldb_table('readseed_ai_result');
-
-        //records the matched words in the passage and their transcript location. For debugging, passage tweaking, and audio location
-        $field = new xmldb_field('sessionmatches', XMLDB_TYPE_TEXT, null, null, null, null);
-
-        // add field to readseed table
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        upgrade_mod_savepoint(true, 2018073101, 'readseed');
-    }
-
-    // Add accadjustmethod to readseed table
-    if ($oldversion < 2018082400) {
-        $table = new xmldb_table('readseed');
-
-        //This allows the activity admin to compensate for a certain no. of errors to compensate for machine transcription errors
-        $field = new xmldb_field('accadjustmethod', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1');
-
-        // add field to readseed table
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        upgrade_mod_savepoint(true, 2018082400, 'readseed');
-    }
-
-    // Add accadjustmethod to readseed table
-    if ($oldversion < 2018082402) {
-        $table = new xmldb_table('readseed_ai_result');
-
-        //This allows the activity admin to compensate for a certain no. of errors to compensate for machine transcription errors
-        $field = new xmldb_field('errorcount', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-
-        // add field to AI table
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        //add field to attempts table
-        $table = new xmldb_table('readseed_attempt');
-        // add field to readseed table
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-
-        upgrade_mod_savepoint(true, 2018082402, 'readseed');
-    }
-    // Add humanpostattempt and machinepostattempt to readseed table
-    if ($oldversion < 2018082403) {
-        $table = new xmldb_table('readseed');
-
-        //This adds the post attempt display options for each of the evaluation methods (machine and human)
-        $field1 = new xmldb_field('humanpostattempt', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '2');
-        $field2 = new xmldb_field('machinepostattempt', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1');
-
-        // add fields to readseed table
-        if (!$dbman->field_exists($table, $field1)) {
-            $dbman->add_field($table, $field1);
-        }
-        if (!$dbman->field_exists($table, $field2)) {
-            $dbman->add_field($table, $field2);
-        }
-
-        upgrade_mod_savepoint(true, 2018082403, 'readseed');
-    }
-    // Add "alternatives" to readseed table
-    if ($oldversion < 2018082404) {
-        $table = new xmldb_table('readseed');
-
-        //This adds the post attempt display options for each of the evaluation methods (machine and human)
-        $field = new xmldb_field('alternatives',XMLDB_TYPE_TEXT, null, null, null, null);
-
-        // add fields to readseed table
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        upgrade_mod_savepoint(true, 2018082404, 'readseed');
-    }
-
-    // Add accadjustmethod to readseed table
-    if ($oldversion < 2018090700) {
-        $table = new xmldb_table('readseed');
-
-        //This allows the activity admin to compensate for a certain no. of errors to compensate for machine transcription errors
-        $field = new xmldb_field('machgrademethod', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-
-        // add field to readseed table
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        upgrade_mod_savepoint(true, 2018090700, 'readseed');
-    }
-
-    // Add accadjustmethod to readseed table
-    if ($oldversion < 2018101200) {
-        $table = new xmldb_table('readseed');
-
-        //This allows the activity admin to compensate for a certain no. of errors to compensate for machine transcription errors
-        $field = new xmldb_field('activitylink', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-
-        // add field to readseed table
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        upgrade_mod_savepoint(true, 2018101200, 'readseed');
+        upgrade_mod_savepoint(true, 2018122000, 'readseed');
     }
 
     // Final return of upgrade result (true, all went good) to Moodle.

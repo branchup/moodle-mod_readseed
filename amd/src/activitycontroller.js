@@ -226,26 +226,23 @@ define(['jquery','jqueryui', 'core/log','mod_readseed/definitions','mod_readseed
             m.controls.recordingcontainer.hide();
 
             //set up the quiz
-            quizhelper.onSubmit = function(){m.dofinishedreadinglayout();};
-            quizhelper.init(m.controls.quizcontainer,this.activitydata.quizdata,this.cmid,this.attemptid);
+            quizhelper.onSubmit = function(returndata){m.dofinishedreadinglayout(returndata);};
+            quizhelper.init(m.controls.quizcontainer,this.activitydata.quizdata,this.cmid,this.attemptid,
+                this.activitydata.passagepictureurl);
 
             //show the quiz
             m.controls.quizcontainer.show();
 
         },
 
-        dofinishedreadinglayout: function(){
+        dofinishedreadinglayout: function(returndata){
             var m = this;
-            /*
-            * THIS IS NOW DONE IN doquizlayout
-            m.controls.hider.fadeOut('fast');
-            m.controls.progresscontainer.fadeOut('fast');
-            m.controls.instructionscontainer.hide();
-            m.controls.passagecontainer.hide();
-            m.controls.recordingcontainer.hide();
-            */
             m.controls.quizcontainer.hide();
             m.controls.feedbackcontainer.show();
+            if(returndata && returndata.success && returndata.data){
+                var flower = returndata.data;
+                m.controls.feedbackcontainer.append('<img src="' + flower.picurl + '"></img>');
+            }
             m.controls.wheretonextcontainer.show();
 
         },

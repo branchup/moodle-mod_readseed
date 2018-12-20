@@ -75,6 +75,8 @@ const TEXTQUESTION = 'itemtext';
 const TEXTANSWER = 'customtext';
 const TEXTQUESTION_FILEAREA = 'itemarea';
 const TEXTANSWER_FILEAREA ='answerarea';
+const PASSAGEPICTURE='passagepicture';
+const PASSAGEPICTURE_FILEAREA = 'passagepicture';
 const MAXANSWERS=4;
 
 //CSS ids/classes

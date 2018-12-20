@@ -87,6 +87,10 @@ function readseed_editor_with_files_options($context){
 function readseed_editor_no_files_options($context){
 	return array('maxfiles' => 0, 'noclean' => true,'context'=>$context);
 }
+function readseed_picturefile_options($context){
+    return array('maxfiles' => EDITOR_UNLIMITED_FILES,
+        'noclean' => true, 'context' => $context, 'subdirs' => true, 'accepted_types' => array('image'));
+}
 
 /**
  * Removes all grades from gradebook
@@ -399,13 +403,13 @@ function readseed_add_instance(stdClass $readseed, mod_readseed_mod_form $mform 
     global $DB;
 
     $readseed->timecreated = time();
-	$readseed = readseed_process_editors($readseed,$mform);
+	$readseed = readseed_process_files($readseed,$mform);
     $instanceid = $DB->insert_record(constants::M_TABLE, $readseed);
 	return $instanceid;
 }
 
 
-function readseed_process_editors(stdClass $readseed, mod_readseed_mod_form $mform = null) {
+function readseed_process_files(stdClass $readseed, mod_readseed_mod_form $mform = null) {
 	global $DB;
     $cmid = $readseed->coursemodule;
     $context = context_module::instance($cmid);
@@ -415,6 +419,10 @@ function readseed_process_editors(stdClass $readseed, mod_readseed_mod_form $mfo
 	foreach($editors as $editor){
 		$readseed = file_postupdate_standard_editor( $readseed, $editor, $edoptions,$context,constants::M_COMPONENT,$editor,$itemid);
 	}
+	//do the passage picture field
+    $ppoptions=readseed_picturefile_options($context);
+    file_save_draft_area_files($readseed->{constants::PASSAGEPICTURE}, $context->id, constants::M_COMPONENT, constants::PASSAGEPICTURE_FILEAREA, 0, $ppoptions);
+
 	return $readseed;
 }
 
@@ -434,7 +442,7 @@ function readseed_update_instance(stdClass $readseed, mod_readseed_mod_form $mfo
 
     $readseed->timemodified = time();
     $readseed->id = $readseed->instance;
-	$readseed = readseed_process_editors($readseed,$mform);
+	$readseed = readseed_process_files($readseed,$mform);
 	$success = $DB->update_record(constants::M_TABLE, $readseed);
 	return $success;
 }

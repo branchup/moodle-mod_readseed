@@ -1,2 +1,6 @@
+Version 1.0.1 (Build 2018122000)
+-added an image to the instance settings. This is so we can show a picture beside passage in quiz
+-added a flower to the end of the attempt, after the result has been submitted
+
 Version 1.0.0 (Build 2018120900)
 -initial commit of Read Seed (starting from)
