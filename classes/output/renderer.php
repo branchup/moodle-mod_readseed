@@ -8,6 +8,7 @@
 
 namespace mod_readseed\output;
 
+use html_writer;
 use \mod_readseed\constants;
 use \mod_readseed\utils;
 use \mod_readseed\comprehensiontest;
@@ -404,6 +405,67 @@ class renderer extends \plugin_renderer_base {
 
         //these need to be returned and echo'ed to the page
         return $ret_html;
+    }
+
+    function load_app($cm, $readseed) {
+        global $CFG;
+
+        $config = get_config(constants::M_COMPONENT);
+        $token = utils::fetch_token($config->apiuser,$config->apisecret);
+        $cantranscribe = utils::can_transcribe($readseed);
+        $comptest =  new comprehensiontest($cm);
+
+        $opts = (object) [];
+        $opts->name = $readseed->name;
+        $opts->welcome = $readseed->welcome;
+        $opts->passage = $readseed->passage;
+        $opts->passagepictureurl = null;
+        $opts->quizdata = $comptest->fetch_test_data_for_js();
+
+        if ($readseed->passagepicture) {
+            $opts->passagepictureurl = $comptest->fetch_media_url(constants::PASSAGEPICTURE_FILEAREA, (object) ['id' => 0]);
+        }
+
+        $hints = base64_encode(json_encode((object) ['allowearlyexit' => $readseed->allowearlyexit]));
+        $recconfig = (object) [];
+        $recconfig->id = 'therecorder';
+        $recconfig->parent = $CFG->wwwroot;
+        $recconfig->localloading = 'auto';
+        $recconfig->localloader = '/mod/readseed/poodllloader.html';
+        $recconfig->media = "audio";
+        $recconfig->appid = constants::M_COMPONENT;
+        $recconfig->type = "readaloud"; // The recorder type, so until we make a readseed one, it's readaloud.
+        $recconfig->width = "360";
+        $recconfig->height = "210";
+        $recconfig->iframeclass = "letsberesponsive";
+        $recconfig->updatecontrol = constants::M_READING_AUDIO_URL;
+        $recconfig->timelimit =  $readseed->timelimit;
+        $recconfig->transcode = true;
+        $recconfig->transcribe =  $cantranscribe;
+        $recconfig->language = $readseed->ttslanguage;
+        $recconfig->expiredays = $readseed->expiredays;
+        $recconfig->region = $readseed->region;
+        $recconfig->fallback = 'warning';
+        $recconfig->hints = $hints;
+        $recconfig->token = $token;
+
+        $appid = html_writer::random_id('readseedapp');
+        $optsid = html_writer::random_id('readseedopts');
+        $recconfigid = html_writer::random_id('readseedrecconfig');
+
+        $this->page->requires->js_call_amd("mod_readseed/app-loader", 'init', [$appid, $optsid, $recconfigid]);
+        $this->page->requires->strings_for_js([
+            'gotnosound',
+            'done',
+            'beginreading'
+        ], constants::M_COMPONENT);
+
+        $html = '';
+        $html .= html_writer::tag('div', '', ['id' => $appid]);
+        $html .= html_writer::tag('script', json_encode($opts), ['id' => $optsid, 'type' => 'application/json']);
+        $html .= html_writer::tag('script', json_encode($recconfig), ['id' => $recconfigid, 'type' => 'application/json']);
+
+        return $html;
     }
 
 }

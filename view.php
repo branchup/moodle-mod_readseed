@@ -193,21 +193,22 @@ if(has_capability('mod/readseed:preview',$modulecontext)){
 }
 
 //fetch token
-$token = \mod_readseed\utils::fetch_token($config->apiuser,$config->apisecret);
+// $token = \mod_readseed\utils::fetch_token($config->apiuser,$config->apisecret);
 
 
 //show all the main parts. Many will be hidden and displayed by JS
-echo $renderer->show_welcome($moduleinstance->welcome,$moduleinstance->name);
-echo $renderer->show_feedback($moduleinstance,$moduleinstance->name);
-echo $renderer->show_error($moduleinstance,$cm);
-echo $renderer->show_passage($moduleinstance,$cm);
-echo $renderer->show_recorder($moduleinstance,$token);
-echo $renderer->show_progress($moduleinstance,$cm);
-echo $renderer->show_wheretonext($moduleinstance);
-echo $renderer->show_quiz();
+// echo $renderer->show_welcome($moduleinstance->welcome,$moduleinstance->name);
+// echo $renderer->show_feedback($moduleinstance,$moduleinstance->name);
+// echo $renderer->show_error($moduleinstance,$cm);
+// echo $renderer->show_passage($moduleinstance,$cm);
+// echo $renderer->show_recorder($moduleinstance,$token);
+// echo $renderer->show_progress($moduleinstance,$cm);
+// echo $renderer->show_wheretonext($moduleinstance);
+// echo $renderer->show_quiz();
 
 //the module AMD code
-echo $renderer->fetch_activity_amd($cm, $moduleinstance);
+// echo $renderer->fetch_activity_amd($cm, $moduleinstance);
+echo $renderer->load_app($cm, $moduleinstance);
 
 // Finish the page
 echo $renderer->footer();
