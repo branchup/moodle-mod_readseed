@@ -408,7 +408,7 @@ class renderer extends \plugin_renderer_base {
     }
 
     function load_app($cm, $readseed) {
-        global $CFG;
+        global $CFG, $USER;
 
         $config = get_config(constants::M_COMPONENT);
         $token = utils::fetch_token($config->apiuser,$config->apisecret);
@@ -416,6 +416,9 @@ class renderer extends \plugin_renderer_base {
         $comptest =  new comprehensiontest($cm);
 
         $opts = (object) [];
+        $opts->cmid = $cm->id;
+        $opts->firstname = $USER->firstname;
+        $opts->wwwroot = $CFG->wwwroot;
         $opts->name = $readseed->name;
         $opts->welcome = $readseed->welcome;
         $opts->passage = $readseed->passage;
@@ -455,10 +458,28 @@ class renderer extends \plugin_renderer_base {
 
         $this->page->requires->js_call_amd("mod_readseed/app-loader", 'init', [$appid, $optsid, $recconfigid]);
         $this->page->requires->strings_for_js([
-            'gotnosound',
+            'aisreading',
+            'beginreading',
+            'clickstartwhenready',
+            'counttofive',
             'done',
-            'beginreading'
+            'gotnosound',
+            'nicereadinga',
+            'pleasewaitafewseconds',
+            'readagainandanswer',
+            'readpassageagainandanswerquestions',
+            'hia',
+            'teacherwillcheck',
+            'goodjoba',
+            'thanksa',
+            'thisisnotcorrect',
+            'tryagain',
+            'thisiscorrect',
         ], constants::M_COMPONENT);
+
+        $this->page->requires->strings_for_js([
+            'next',
+        ], 'core');
 
         $html = '';
         $html .= html_writer::tag('div', '', ['id' => $appid]);

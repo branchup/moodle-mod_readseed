@@ -5,7 +5,7 @@ module.exports = {
   mode: 'development',
   target: 'web',
   entry: {
-    app: './index.js'
+    app: ['@babel/polyfill', './index.js']
   },
   output: {
     filename: '[name].js',
@@ -18,7 +18,7 @@ module.exports = {
         test: /\.js?$/,
         exclude: /(node_modules|bower_components)/,
         use: ['babel-loader']
-      },
+      }
     ]
   }
 };

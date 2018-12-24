@@ -44,6 +44,21 @@ $string['readseed:preview'] = 'Can preview Read Seed activities';
 $string['readseed:submit'] = 'Can submit Read Seed attempts';
 $string['privacy:metadata'] = 'The Poodll Read Seed plugin does store personal data.';
 
+// App.
+$string['aisreading'] = '{$a} is reading...';
+$string['clickstartwhenready'] = 'Click the \'Start activity\' button. Then you will see a story and should begin reading.';
+$string['counttofive'] = 'Count to 5 and wake up the sleepy seed';
+$string['teacherwillcheck'] = 'Your teacher will check your reading.';
+$string['nicereadinga'] = 'Nice reading, Jenny';
+$string['pleasewaitafewseconds'] = 'Please wait a few seconds...';
+$string['readagainandanswer'] = 'Read again and answer the questions';
+$string['readpassageagainandanswerquestions'] = 'Please read the passage again, and answer some questions.';
+$string['hia'] = 'Hi {$a}';
+$string['thisisnotcorrect'] = 'This is not correct.';
+$string['goodjoba'] = 'Good job {$a}';
+$string['thanksa'] = 'Thanks {$a}';
+$string['tryagain'] = 'Try again';
+$string['thisiscorrect'] = 'This is correct!';
 
 $string['id']='ID';
 $string['name']='Name';

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { getModule } from '../lib/cloudpoodll';
@@ -6,6 +7,10 @@ import { getModule } from '../lib/cloudpoodll';
 class Recorder extends React.PureComponent {
   state = {
     loaded: false
+  };
+
+  static propTypes = {
+    onMessageReceived: PropTypes.func
   };
 
   constructor(props) {
@@ -34,7 +39,7 @@ class Recorder extends React.PureComponent {
   }
 
   handleEvents = message => {
-    console.log(message);
+    this.props.onMessageReceived && this.props.onMessageReceived(message);
   };
 
   render() {

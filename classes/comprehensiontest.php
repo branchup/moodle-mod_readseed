@@ -92,7 +92,7 @@ class comprehensiontest
                     'pluginfile.php', $this->context->id,constants::M_COMPONENT,
                     constants::TEXTANSWER_FILEAREA . $anumber, $itemid);
             }
-            $testitem->correctanswer =  $item->{constants::TEXTQUESTION};
+            $testitem->correctanswer =  $item->correctanswer;
             $testitem->id = $item->id;
             $testitem->type=$item->type;
             $testitems[]=$testitem;
