@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router';
 import { bindActionCreators } from 'redux';
@@ -14,6 +14,7 @@ import { sendSubmission, wakeUpMrSeed, makeMrSeedListen, makeMrSeedReady } from 
 
 class Home extends React.PureComponent {
   static propTypes = {
+    attemptId: PropTypes.any,
     name: PropTypes.string.isRequired,
     wakeUpMrSeed: PropTypes.func.isRequired,
     makeMrSeedListen: PropTypes.func.isRequired,
@@ -31,7 +32,7 @@ class Home extends React.PureComponent {
 
   componentDidMount() {
     // Simulate that we've got a confirmation that the microphone works.
-    setTimeout(this.handleMicrophoneConfirmed, 2000);
+    setTimeout(this.handleMicrophoneConfirmed, 5000);
   }
 
   handleMicrophoneConfirmed = () => {
@@ -58,58 +59,61 @@ class Home extends React.PureComponent {
 
   renderInit() {
     return (
-      <>
+      <div className="mod_readseed-flex-1 mod_readseed-flex-col mod_readseed-flex-items-center mod_readseed-flex-equal">
         <h3>{getString('hia', 'mod_readseed', this.props.name)}</h3>
         <TextToSpeech>
-          <p>{getString('counttofive', 'mod_readseed')}</p>
+          <p className="text-center">{getString('counttofive', 'mod_readseed')}</p>
         </TextToSpeech>
         <MrSeed />
-      </>
+      </div>
     );
   }
 
   renderReady() {
     return (
-      <>
+      <div className="mod_readseed-flex-1 mod_readseed-flex-col mod_readseed-flex-items-center mod_readseed-flex-equal">
         <h3>{getString('hia', 'mod_readseed', this.props.name)}</h3>
         <TextToSpeech>
-          <p>{getString('clickstartwhenready', 'mod_readseed')}</p>
+          <p className="text-center">{getString('clickstartwhenready', 'mod_readseed')}</p>
         </TextToSpeech>
         <MrSeed />
-      </>
+      </div>
     );
   }
 
   renderReading() {
     return (
-      <>
+      <div className="mod_readseed-flex-1 mod_readseed-flex-col mod_readseed-flex-items-center">
         <h3>{getString('aisreading', 'mod_readseed', this.props.name)}</h3>
-        <div>
-          <Passage />
-        </div>
-      </>
+        <Passage className="mod_readseed-flex-1 mod_readseed-flex-col" style={{ width: '100%' }} />
+      </div>
     );
   }
 
   renderRead() {
     return (
-      <>
+      <div className="mod_readseed-flex-1 mod_readseed-flex-col mod_readseed-flex-items-center">
         <h3>{getString('nicereadinga', 'mod_readseed', this.props.name)}</h3>
-        <div style={{ display: 'flex' }}>
-          <div>
-            <MrSeed />
-          </div>
-          <div>
-            <TextToSpeech>
-              <p>{getString('readpassageagainandanswerquestions', 'mod_readseed')}</p>
-            </TextToSpeech>
-            <button disabled={!this.props.submissionSubmitted} onClick={() => this.setState({ step: 'toquiz' })}>
-              Go
-            </button>
-            {!this.props.submissionSubmitted ? <p>{getString('pleasewaitafewseconds', 'mod_readseed')}</p> : null}
+        <div
+          className="mod_readseed-flex-1 mod_readseed-flex-col mod_readseed-flex-items-center"
+          style={{ justifyContent: 'space-around' }}
+        >
+          <MrSeed />
+          <div className="mod_readseed-flex-col mod_readseed-flex-items-center">
+            {!this.props.submissionSubmitted ? <p>⏳ {getString('pleasewaitafewseconds', 'mod_readseed')}</p> : null}
+            {this.props.submissionSubmitted ? (
+              <Fragment>
+                <TextToSpeech>
+                  <p>{getString('readpassageagainandanswerquestions', 'mod_readseed')}</p>
+                </TextToSpeech>
+                <button disabled={!this.props.submissionSubmitted} onClick={() => this.setState({ step: 'toquiz' })}>
+                  Go
+                </button>
+              </Fragment>
+            ) : null}
           </div>
         </div>
-      </>
+      </div>
     );
   }
 
@@ -135,9 +139,9 @@ class Home extends React.PureComponent {
         break;
     }
     return (
-      <div style={{ display: 'flex' }}>
-        <div>{content}</div>
-        <div>
+      <div className="mod_readseed-flex mod_readseed-flex-1">
+        <div className="mod_readseed-flex mod_readseed-flex-1">{content}</div>
+        <div className="mod_readseed-flex-col mod_readseed-flex-items-center">
           {aboveRecorder}
           <Recorder onMessageReceived={this.handleRecorderMessage} />
         </div>
@@ -147,7 +151,7 @@ class Home extends React.PureComponent {
 }
 
 const ConnectedHome = connect(
-  state => ({ name: state.options.firstname, submissionSubmitted: state.submissionSubmitted }),
+  state => ({ name: state.options.firstname, submissionSubmitted: state.submissionSubmitted, attemptId: state.attemptId }),
   dispatch => bindActionCreators({ sendSubmission, wakeUpMrSeed, makeMrSeedListen, makeMrSeedReady }, dispatch)
 )(Home);
 

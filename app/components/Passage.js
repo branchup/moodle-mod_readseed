@@ -2,21 +2,32 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import ScrollView from './ScrollView';
+
 class Passage extends React.PureComponent {
     static propTypes = {
         text: PropTypes.string.isRequired,
-        imageUrl: PropTypes.string
+        imageUrl: PropTypes.string,
+
+        style: PropTypes.object,
+        className: PropTypes.string
     };
 
     render() {
         return (
-            <div style={{ display: 'flex' }}>
-                {this.imageUrl ? (
-                    <div style={{ maxWidth: '200px', marginRight: '1em' }}>
-                        <img src={this.imageUrl} alt="" style={{ maxWidth: '100%' }} />
+            <div style={{ position: 'relative', ...this.props.style }} className={this.props.className}>
+                <ScrollView>
+                    <div className="mod_readseed-passage">
+                        <div>
+                            {this.props.imageUrl ? (
+                                <div className="mod_readseed-passage-pic">
+                                    <img src={this.props.imageUrl} alt="" role="decoration" />
+                                </div>
+                            ) : null}
+                            {this.props.text}
+                        </div>
                     </div>
-                ) : null}
-                <div style={{ flex: 1 }}>{this.props.text}</div>
+                </ScrollView>
             </div>
         );
     }

@@ -103,15 +103,20 @@ if(!$canpreview && $moduleinstance->maxattempts > 0){
 //reset our retake flag if we cant reatempt
 if(!$canattempt){$retake=0;}
 
+// Get the last attempt if there is one, and we're not re-attempting the quiz.
+$latestattempt = !$retake ? ($attempts ? array_shift($attempts) : null) : null;
+
+// Check if last attempt is finished, at this point we only check if at least an answer was provided.
+$islastattemptfinished = !$latestattempt || !empty($latestattempt->qanswer1);
+
 //display the most recent previous attempt if we have one
-if($attempts && $retake==0){
+if ($latestattempt && $islastattemptfinished && $retake==0){
     //if we are teacher we see tabs. If student we just see the quiz
     if(has_capability('mod/readseed:preview',$modulecontext)){
         echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('view', constants::M_COMPONENT));
     }else{
         echo $renderer->notabsheader();
     }
-    $latestattempt = array_shift($attempts);
 
     //========================================
     if(\mod_readseed\utils::can_transcribe($moduleinstance)) {
@@ -208,7 +213,7 @@ if(has_capability('mod/readseed:preview',$modulecontext)){
 
 //the module AMD code
 // echo $renderer->fetch_activity_amd($cm, $moduleinstance);
-echo $renderer->load_app($cm, $moduleinstance);
+echo $renderer->load_app($cm, $moduleinstance, $latestattempt);
 
 // Finish the page
 echo $renderer->footer();

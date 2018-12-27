@@ -4,33 +4,32 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 
+import QuizQuestion from '../components/QuizQuestion';
+import { setQuestionAnswer, setCurrentQuestionNumber, submitQuizResults } from '../state/actions';
 import Passage from '../components/Passage';
-import Question from '../components/Question';
 import { getString } from '../lib/moodle';
-import { setCurrentQuestionNumber, submitQuizResults, makeMrSeedReady } from '../state/actions';
 
 class Quiz extends React.PureComponent {
     static propTypes = {
-        attemptId: PropTypes.number,
-        currentQuestionNumber: PropTypes.number,
+        attemptId: PropTypes.number.isRequired,
+        answers: PropTypes.object.isRequired,
         questions: PropTypes.array.isRequired,
-        makeMrSeedReady: PropTypes.func.isRequired,
-        submitQuizResults: PropTypes.func.isRequired,
-        setCurrentQuestionNumber: PropTypes.func.isRequired
+        currentQuestionNumber: PropTypes.number.isRequired,
+
+        setCurrentQuestionNumber: PropTypes.func.isRequired,
+        setQuestionAnswer: PropTypes.func.isRequired,
+        submitQuizResults: PropTypes.func.isRequired
     };
 
     state = {
         go: null
     };
 
-    componentDidMount() {
-        this.props.makeMrSeedReady();
-        if (!this.props.currentQuestionNumber) {
-            this.props.setCurrentQuestionNumber(this.props.questions[0].number);
-        }
-    }
+    handleAnswerSelected = answer => {
+        this.props.setQuestionAnswer(this.props.currentQuestionNumber, answer);
+    };
 
-    handleClickNext = () => {
+    handleGoToNextQuestion = () => {
         if (this.props.currentQuestionNumber < this.props.questions.length) {
             this.props.setCurrentQuestionNumber(this.props.currentQuestionNumber + 1);
         } else {
@@ -43,6 +42,10 @@ class Quiz extends React.PureComponent {
         return this.props.questions.find(q => q.number == this.props.currentQuestionNumber);
     }
 
+    getQuestionAnswer() {
+        return this.props.answers[this.props.currentQuestionNumber];
+    }
+
     render() {
         if (!this.props.currentQuestionNumber) {
             return null;
@@ -52,16 +55,20 @@ class Quiz extends React.PureComponent {
             return <Redirect to="/" />;
         }
 
-        const question = this.getQuestion();
         return (
-            <div>
+            <div className="mod_readseed-flex-col mod_readseed-flex-1">
                 <h3>{getString('readagainandanswer', 'mod_readseed')}</h3>
-                <div style={{ display: 'flex' }}>
-                    <div style={{ flex: 2 }}>
-                        <Passage />
-                    </div>
-                    <div style={{ marginLeft: '1em', flex: 1 }}>
-                        <Question question={question} onClickNext={this.handleClickNext} key={this.props.currentQuestionNumber} />
+                <div className="mod_readseed-flex mod_readseed-flex-1">
+                    <Passage style={{ flex: 2 }} />
+                    <div className="mod_readseed-flex-1" style={{ marginLeft: '1em' }}>
+                        <QuizQuestion
+                            key={this.props.currentQuestionNumber}
+                            question={this.getQuestion()}
+                            canSelectAnswer={!this.getQuestionAnswer()}
+                            selectedAnswer={this.getQuestionAnswer()}
+                            onAnswerSelected={this.handleAnswerSelected}
+                            onGoToNextQuestion={this.handleGoToNextQuestion}
+                        />
                     </div>
                 </div>
             </div>
@@ -72,10 +79,11 @@ class Quiz extends React.PureComponent {
 const ConnectedQuiz = connect(
     state => ({
         questions: state.options.quizdata,
-        currentQuestionNumber: state.currentQuestionNumber,
+        currentQuestionNumber: state.quiz.currentQuestionNumber || 1,
+        answers: state.quiz.answers,
         attemptId: state.attemptId
     }),
-    dispatch => bindActionCreators({ setCurrentQuestionNumber, makeMrSeedReady, submitQuizResults }, dispatch)
+    dispatch => bindActionCreators({ setQuestionAnswer, setCurrentQuestionNumber, submitQuizResults }, dispatch)
 )(Quiz);
 
 export default ConnectedQuiz;

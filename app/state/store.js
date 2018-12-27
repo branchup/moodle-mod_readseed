@@ -8,10 +8,6 @@ import * as seed from '../lib/seed';
 
 const actionsReducer = handleActions(
   {
-    [actions.setCurrentQuestionNumber]: (state, action) => ({
-      ...state,
-      currentQuestionNumber: action.payload.questionNumber
-    }),
     [actions.submissionSubmitted]: (state, action) => {
       return {
         ...state,
@@ -19,6 +15,23 @@ const actionsReducer = handleActions(
         attemptId: action.payload.attemptId
       };
     }
+  },
+  {}
+);
+
+const quizReducer = handleActions(
+  {
+    [actions.setCurrentQuestionNumber]: (state, action) => ({
+      ...state,
+      currentQuestionNumber: action.payload.questionNumber
+    }),
+    [actions.setQuestionAnswer]: (state, action) => ({
+      ...state,
+      answers: {
+        ...state.answers,
+        [action.payload.questionNumber]: action.payload.answerIndex
+      }
+    })
   },
   {}
 );
@@ -38,6 +51,9 @@ const rootReducer = (state = {}, action) => {
   state = actionsReducer(state, action);
   state = {
     ...state,
+    quiz: {
+      ...quizReducer(state.quiz, action)
+    },
     mrseed: {
       ...mrSeedReducer(state.mrseed, action)
     }
@@ -51,12 +67,16 @@ function getStore(options, recorderConfig) {
     recorder: {
       config: recorderConfig
     },
-    attemptId: null,
+    attemptId: options.attemptid ? options.attemptid : null,
     submissionSubmitted: false,
-    currentQuestionNumber: null,
+    quiz: {
+      currentQuestionNumber: null,
+      answers: {}
+    },
     mrseed: mrSeedInitialState
   };
-  return createStore(rootReducer, initialState, applyMiddleware(thunk, createLogger()));
+  return createStore(rootReducer, initialState, applyMiddleware(thunk));
+  // return createStore(rootReducer, initialState, applyMiddleware(thunk, createLogger()));
 }
 
 export { getStore };

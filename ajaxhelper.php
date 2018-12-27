@@ -24,7 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
+define('AJAX_SCRIPT', true);
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 
 use \mod_readseed\constants;
@@ -73,17 +73,19 @@ function process_quizresults($modulecontext,$readseed,$quizresults,$attemptid)
     $message = '';
     $returndata=false;
 
-
     $attempt = $DB->get_record(constants::M_USERTABLE,array('id'=>$attemptid,'userid'=>$USER->id));
     if($attempt) {
         $useresults = json_decode($quizresults);
+        $answers = $useresults->answers;
         //more data here
-        if(isset($useresults->qanswer1)){$attempt->qanswer1=$useresults->qanswer1;}
-        if(isset($useresults->qanswer2)){$attempt->qanswer2=$useresults->qanswer2;}
-        if(isset($useresults->qanswer3)){$attempt->qanswer3=$useresults->qanswer3;}
-        if(isset($useresults->qanswer4)){$attempt->qanswer4=$useresults->qanswer4;}
-        if(isset($useresults->qanswer5)){$attempt->qanswer5=$useresults->qanswer5;}
-        if(isset($useresults->qtextanswer1)){$attempt->qtextanswer1=$useresults->qtextanswer1;}
+
+        if (isset($answers->{'1'})) { $attempt->qanswer1 = $answers->{'1'}; }
+        if (isset($answers->{'2'})) { $attempt->qanswer2 = $answers->{'2'}; }
+        if (isset($answers->{'3'})) { $attempt->qanswer3 = $answers->{'3'}; }
+        if (isset($answers->{'4'})) { $attempt->qanswer4 = $answers->{'4'}; }
+        if (isset($answers->{'5'})) { $attempt->qanswer5 = $answers->{'5'}; }
+
+        // if (isset($useresults->qtextanswer1)){$attempt->qtextanswer1=$useresults->qtextanswer1;}
         //get users flower
         $flower = utils::fetch_newflower();
         if($flower) {

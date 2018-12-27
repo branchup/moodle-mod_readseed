@@ -1,25 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 
 import TextToSpeech from './TextToSpeech';
-import MrSeed from './MrSeed';
-import { getString } from '../lib/moodle';
-import { makeMrSeedShakeHead, makeMrSeedGiveThumbsUp, makeMrSeedReady } from '../state/actions';
 
 class Question extends React.PureComponent {
     static propTypes = {
         question: PropTypes.object.isRequired,
-        makeMrSeedReady: PropTypes.func.isRequired,
-        makeMrSeedShakeHead: PropTypes.func.isRequired,
-        makeMrSeedGiveThumbsUp: PropTypes.func.isRequired,
-        onClickNext: PropTypes.func.isRequired
-    };
-
-    state = {
-        answer: null,
-        correct: false
+        onAnswerSelected: PropTypes.func.isRequired,
+        correctAnswer: PropTypes.number, // When provided, will display visual feedback.
+        selectedAnswer: PropTypes.number
     };
 
     getAnswers() {
@@ -34,87 +23,52 @@ class Question extends React.PureComponent {
         return answers;
     }
 
-    handleNextClick = e => {
+    handleAnswerSelected = (e, answer) => {
         e.preventDefault();
-        this.props.onClickNext();
-    };
-
-    handleTryAgainClick = e => {
-        this.setState({ answer: null });
-        this.props.makeMrSeedReady();
-    };
-
-    handleSelectAnswer = answer => {
-        // We change selection.
-        if (this.state.answer) {
-            return;
-        }
-
-        const correct = answer.index == this.props.question.correctanswer;
-        this.setState({ answer: answer.index, correct: correct });
-        if (!correct) {
-            this.props.makeMrSeedShakeHead();
-        } else {
-            this.props.makeMrSeedGiveThumbsUp();
-        }
+        this.props.onAnswerSelected(answer.index);
     };
 
     renderAnswer = answer => {
+        const answered = this.props.selectedAnswer;
+        const isSelected = answer.index == this.props.selectedAnswer;
+        let classNames = isSelected ? ['is-selected'] : [];
+
+        if (this.props.correctAnswer) {
+            const isCorrect = answered && this.props.correctAnswer == answer.index;
+            const isIncorrect = answered && !isCorrect;
+            if (isCorrect) {
+                classNames.push('is-correct');
+            } else if (isIncorrect) {
+                classNames.push('is-incorrect');
+            }
+        }
+
         return (
-            <div key={answer.index} onClick={() => this.handleSelectAnswer(answer)}>
-                {answer.index == this.state.answer ? '🔘' : '⚪'}
+            <a
+                href="#"
+                key={answer.index}
+                onClick={e => this.handleAnswerSelected(e, answer)}
+                className={`${classNames.join(' ')} mod_readseed-answer`}
+            >
                 {answer.text}
-            </div>
+            </a>
         );
     };
-
-    renderFeedback() {
-        if (!this.state.answer) {
-            return;
-        }
-        if (!this.state.correct) {
-            return (
-                <div>
-                    <div>
-                        <p>🛑 {getString('thisisnotcorrect', 'mod_readseed')}</p>
-                    </div>
-                    <button onClick={this.handleTryAgainClick}>{getString('tryagain', 'mod_readseed')}</button>
-                </div>
-            );
-        }
-        return (
-            <div>
-                <div>
-                    <p>🌟 {getString('thisiscorrect', 'mod_readseed')}</p>
-                </div>
-                <button onClick={this.handleNextClick}>{getString('next')}</button>
-            </div>
-        );
-    }
 
     render() {
         const { question: q } = this.props;
         const answers = this.getAnswers();
         return (
-            <div>
-                <div>
+            <div className={`${this.props.selectedAnswer ? 'is-answered' : ''} mod_readseed-question`}>
+                <div className="mod_readseed-question-title">
                     <TextToSpeech>
                         <span dangerouslySetInnerHTML={{ __html: q.text }} />
                     </TextToSpeech>
                 </div>
-                <div>{answers.map(this.renderAnswer)}</div>
-                {this.renderFeedback()}
-                <div>
-                    <MrSeed />
-                </div>
+                <div className="mod_readseed-answers">{answers.map(this.renderAnswer)}</div>
             </div>
         );
     }
 }
 
-const ConnectedQuestion = connect(
-    null,
-    dispatch => bindActionCreators({ makeMrSeedShakeHead, makeMrSeedGiveThumbsUp, makeMrSeedReady }, dispatch)
-)(Question);
-
-export default ConnectedQuestion;
+export default Question;

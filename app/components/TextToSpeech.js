@@ -18,13 +18,11 @@ class TextToSpeech extends React.PureComponent {
 
   render() {
     return (
-      <div style={{ position: 'relative', display: 'flex' }}>
-        <div style={{ display: 'inline-block' }} ref={this.divRef}>
-          {this.props.children}
-        </div>
-        <button href="#" onClick={this.handleRead} style={{ margin: '0 0 0 .5em', alignSelf: 'flex-start' }}>
+      <div className="mod_readseed-texttospeech">
+        <div ref={this.divRef}>{this.props.children}</div>
+        <a href="#" onClick={this.handleRead}>
           🔊
-        </button>
+        </a>
       </div>
     );
   }

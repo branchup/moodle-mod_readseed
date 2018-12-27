@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router';
 
 import MrSeed from '../components/MrSeed';
 import TextToSpeech from '../components/TextToSpeech';
@@ -23,7 +22,7 @@ class End extends React.PureComponent {
 
     render() {
         return (
-            <div>
+            <div className="mod_readseed-flex-col mod_readseed-flex-equal mod_readseed-flex-items-center mod_readseed-flex-1">
                 <h3>{getString('goodjoba', 'mod_readseed', this.props.name)}</h3>
                 <TextToSpeech>
                     <p>{getString('teacherwillcheck', 'mod_readseed')}</p>

@@ -12,10 +12,42 @@ class MrSeed extends React.PureComponent {
   };
 
   render() {
+    const tmp = <img src={getImageUrl('pacman', 'mod_readseed')} />;
+    let emoji;
+
+    switch (this.props.mode) {
+      case seed.BLOOM:
+        emoji = '🌻';
+        break;
+      case seed.SLEEPING:
+        emoji = '😴';
+        break;
+      case seed.WAKE_UP:
+        emoji = '🥴';
+        break;
+      case seed.LISTENING:
+        emoji = '🤭';
+        break;
+      case seed.SMH:
+        emoji = '🙄';
+        break;
+      case seed.THUMBS_UP:
+        emoji = '😍';
+        break;
+      case seed.READY:
+      default:
+        emoji = '🙂';
+        break;
+    }
+
     return (
-      <div>
-        <img src={getImageUrl('pacman', 'mod_readseed')} />
-        <div>{this.props.mode}</div>
+      <div className="mod_readseed-flex-col mod_readseed-flex-items-center">
+        <div style={{ fontSize: '50px', margin: '1em' }}>{emoji}</div>
+        <div>
+          <small>
+            <em>feeling: {this.props.mode}</em>
+          </small>
+        </div>
       </div>
     );
   }

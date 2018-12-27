@@ -19,15 +19,21 @@ export const sendSubmission = (mediaUrl, recordTime) => {
 };
 
 // Quiz.
+export const setQuestionAnswer = createAction('setQuestionAnswer', (questionNumber, answerIndex) => ({
+  questionNumber,
+  answerIndex
+}));
 export const setCurrentQuestionNumber = createAction('setCurrentQuestionNumber', questionNumber => ({ questionNumber }));
 export const submitQuizResults = () => {
   return (dispatch, getState) => {
-    const { wwwroot, cmid } = getState().options;
-    const { attemptId } = getState();
+    const state = getState();
+    const { wwwroot, cmid } = state.options;
+    const { attemptId } = state;
+    const { answers } = state.quiz;
     if (!attemptId) {
       throw new Error('Whoops, attempt ID unknown!');
     }
-    Moodle.sendQuizResults(wwwroot, cmid, attemptId, {});
+    Moodle.sendQuizResults(wwwroot, cmid, attemptId, { answers });
   };
 };
 

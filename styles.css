@@ -1,322 +1,624 @@
 .mod_readseed_center {
-	text-align: center;
+    text-align: center;
 }
 .mod_readseed_center > div, .mod_readseed_center > table /* insert any other block-level elements here */ {
-	margin-left: auto;
-	margin-right: auto;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.mod_readseed_listbuttons input[type="submit"]{
-	width: 400px;
+.mod_readseed_listbuttons input[type='submit'] {
+    width: 400px;
 }
 
 .mod_readseed_actionbuttons {
-	display: flex;
-	float: right;
+    display: flex;
+    float: right;
 }
 
 .mod_readseed_recording_cont {
-	display: block;
-	margin: auto;
-	text-align: center;
-	width: 100%;
-	background-image: url([[pix:mod_readseed|loader]]);
-	background-repeat: no-repeat;
-	background-position: center center;
+    display: block;
+    margin: auto;
+    text-align: center;
+    width: 100%;
+    background-image: url([[pix:mod_readseed|loader]]);
+    background-repeat: no-repeat;
+    background-position: center center;
 }
 
 .mod_readseed_recorder_instr_right,
 .mod_readseed_recorder_instr_left {
-	float: left;
-	width: 240px;
-	height: 100px; 
+    float: left;
+    width: 240px;
+    height: 100px;
 }
 .mod_readseed_dummyrecorder {
-	float: left;
+    float: left;
 }
 .mod_readseed_dummy_recorder_hidden {
-	display: none;
+    display: none;
 }
 .mod_readseed_dummy_recorder_recording {
-	display: block;
-	float: left;
-	width: 239px;
-	height: 100px;
-	background-size: 90px 90px;
-	background-repeat: no-repeat;
-	background-position: center;
-	background-color: red;
+    display: block;
+    float: left;
+    width: 239px;
+    height: 100px;
+    background-size: 90px 90px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: red;
 }
 .mod_readseed_dummy_recorder_stopped {
-	display: block;
-	width: 239px;
-	height: 100px;
-	float: left;
-	background-size: 90px 90px;
-	background-repeat: no-repeat;
-	background-position: center;
-	background-color: grey;
+    display: block;
+    width: 239px;
+    height: 100px;
+    float: left;
+    background-size: 90px 90px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: grey;
 }
-.mod_readseed_getpermissionmode{
-	background-color: red;
-	height: 170px;
+.mod_readseed_getpermissionmode {
+    background-color: red;
+    height: 170px;
 }
 
 .mod_readseed_start_button_cont,
 .mod_readseed_record_button_cont,
-.mod_readseed_stop_button_cont{
-	clear: both;
-	padding: 5px;
-	text-align: center;
-	width: 100%;
+.mod_readseed_stop_button_cont {
+    clear: both;
+    padding: 5px;
+    text-align: center;
+    width: 100%;
 }
 .mod_readseed_stop_button,
 .mod_readseed_start_button,
-.mod_readseed_record_button
-{
-	margin: auto;
-	width: 200px;
+.mod_readseed_record_button {
+    margin: auto;
+    width: 200px;
 }
 .mod_readseed_voicecanvas {
-	width: 239px;
-	height: 100px;
-	z-index: 8;
+    width: 239px;
+    height: 100px;
+    z-index: 8;
 }
 .mod_readseed_passage_cont {
-	display: none;
-	line-height: 2em;
-	font-size: 1.5em;
+    display: none;
+    line-height: 2em;
+    font-size: 1.5em;
     border-style: double;
     padding: 3px;
     border-color: gold;
-	margin-top: 15px;
+    margin-top: 15px;
 }
 
 .mod_readseed_grading_passagecont {
-	line-height: 2em;
-	font-size: 1.5em;
+    line-height: 2em;
+    font-size: 1.5em;
     border-style: double;
     padding: 3px;
     border-color: gold;
-   margin-top: 15px;
-
+    margin-top: 15px;
 }
 
-
 div.mod_readseed_passage_cont.mod_readseed_postattempt {
-	display: block;
-	background-color: #CCCCCC;
+    display: block;
+    background-color: #cccccc;
 }
 
 .mod_readseed_grading_action_cont {
-	border-style: double;
-	padding: 3px;
-	border-color: gold;
-	margin-top: 15px;
-	align-items: center;
+    border-style: double;
+    padding: 3px;
+    border-color: gold;
+    margin-top: 15px;
+    align-items: center;
 }
 
 .mod_readseed_grading_badword {
-	color:red;
-	background-color: #ffcaca;
-	padding: 5px;
-	border-radius: 5px 5px 5px;
-	border: 1px solid red;
-	position:relative;
+    color: red;
+    background-color: #ffcaca;
+    padding: 5px;
+    border-radius: 5px 5px 5px;
+    border: 1px solid red;
+    position: relative;
 }
 .mod_readseed_grading_endspace {
-	color: blue; 
-	background-color: #cacaff;
-	padding: 5px;
-	border-radius: 5px 5px 5px;
-	border: 1px solid blue;
-	position:relative;
+    color: blue;
+    background-color: #cacaff;
+    padding: 5px;
+    border-radius: 5px 5px 5px;
+    border: 1px solid blue;
+    position: relative;
 }
-.mod_readseed_grading_passagespace{
-	padding: 2px;
+.mod_readseed_grading_passagespace {
+    padding: 2px;
 }
 .mod_readseed_grading_unreadword {
-	font-style: italic;
-	text-decoration: line-through;
+    font-style: italic;
+    text-decoration: line-through;
 }
 .mod_readseed_passage_finished {
-	background-color: #CCCCCC;
-	padding: 2px;
+    background-color: #cccccc;
+    padding: 2px;
 }
 .mod_readseed_feedback_cont {
-	display: none;
+    display: none;
 }
 .mod_readseed_wheretonext_cont {
-	display: none;
+    display: none;
 }
 .mod_readseed_quiz_cont {
-	display: none;
+    display: none;
 }
 div.mod_readseed_feedback_cont.mod_readseed_postattempt {
-	display: block;
+    display: block;
 }
 .mod_readseed_evaluated_message {
-	display: block;
+    display: block;
 }
 .mod_readseed_error_cont {
-	display: none;
+    display: none;
 }
-.mod_readseed_error_cont h3{
-	color: red;
+.mod_readseed_error_cont h3 {
+    color: red;
 }
 .mod_readseed_grading_player_cont {
-	color: blue;
+    color: blue;
 }
 .mod_readseed_hidden_player {
-	display: none;
+    display: none;
 }
 .mod_readseed_hidden_player_button {
-  color: white;
-  border-color: cadetblue;
-  background-color: cadetblue;
-  border-style: solid;
-  border: 1px;
-  padding: 3px;
-  text-align: center;
+    color: white;
+    border-color: cadetblue;
+    background-color: cadetblue;
+    border-style: solid;
+    border: 1px;
+    padding: 3px;
+    text-align: center;
 }
 .mod_readseed_hidden_player_button_active {
-	 color: white;
-	 border-color: tomato;
-	 background-color: tomato;
+    color: white;
+    border-color: tomato;
+    background-color: tomato;
 }
 .mod_readseed_hidden_player_button_paused {
-	color: white;
+    color: white;
 }
-.mod_readseed_hidden_player_button_playing{
-	color: white;
+.mod_readseed_hidden_player_button_playing {
+    color: white;
 }
-
 
 .mod_readseed_grading_accuracy_cont,
 .mod_readseed_grading_wpm_cont,
 .mod_readseed_grading_error_cont,
 .mod_readseed_grading_sessionscore_cont {
-	color: blue;
-	display: flex;
-	margin-left: 15px;
+    color: blue;
+    display: flex;
+    margin-left: 15px;
 }
 
 .mod_readseed_grading_wpm_img {
-	color: blue;
+    color: blue;
 }
 
 .mod_readseed_grading_score {
-	color: blue;
-	line-height: 18px;
-	margin-left: 5px;
-	text-align: center;
-	font-size: 2em;
-	height: 35px;
-	width: 70px;
+    color: blue;
+    line-height: 18px;
+    margin-left: 5px;
+    text-align: center;
+    font-size: 2em;
+    height: 35px;
+    width: 70px;
 }
 .mod_readseed_grading_error_img {
-	color: blue;
+    color: blue;
 }
 .mod_readseed_grading_action_cont {
-	color: blue;
-	display: flex;
+    color: blue;
+    display: flex;
 }
 .mod_readseed_afterattempt_cont,
 .mod_readseed_wheretonext_cont,
 .mod_readseed_ungraded_cont {
-	margin-left: auto;
-	margin-right: auto;
-	width: 40%;
-	text-align: center;
-	margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+    text-align: center;
+    margin-top: 30px;
 }
-#mod_readseed_hider
-    {
-        display: none;
-		position:absolute;
-        top: 0%;
-        left: 0%;
-        width: 1600px;
-        height: 2000px;
-        margin-top: -1000px; /*set to a negative number 1/2 of your height*/
-        margin-left: 0px; /*set to a negative number 1/2 of your width*/
-        /*
+#mod_readseed_hider {
+    display: none;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 1600px;
+    height: 2000px;
+    margin-top: -1000px; /*set to a negative number 1/2 of your height*/
+    margin-left: 0px; /*set to a negative number 1/2 of your width*/
+    /*
         z- index must be lower than pop up box
        */
-        z-index: 99;
-       background-color:Black;
-       opacity: 0.6;
-    }
+    z-index: 99;
+    background-color: Black;
+    opacity: 0.6;
+}
 
-#mod_readseed_progress_cont
-    {
-	display: none;
-    position:absolute;
-		text-align: center;
-        top: 50%;
-        left: 50%;
-        width:300px;
-        height:120px;
-        margin-top: -60px; /*set to a negative number 1/2 of your height*/
-        margin-left: -150px; /*set to a negative number 1/2 of your width*/
-        border: 1px solid #ccc;
-        border:  2px solid black;
-        z-index:100; 
-		background-color: white;
-
-    }
-	/* spotcheckmode */
-  .mod_readseed_grading_passageword.mod_readseed_grading_badword.mod_readseed_spotcheckmode {
-	  border-color: green;
-	  background-color: #d7f9ca;
-  }
+#mod_readseed_progress_cont {
+    display: none;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 120px;
+    margin-top: -60px; /*set to a negative number 1/2 of your height*/
+    margin-left: -150px; /*set to a negative number 1/2 of your width*/
+    border: 1px solid #ccc;
+    border: 2px solid black;
+    z-index: 100;
+    background-color: white;
+}
+/* spotcheckmode */
+.mod_readseed_grading_passageword.mod_readseed_grading_badword.mod_readseed_spotcheckmode {
+    border-color: green;
+    background-color: #d7f9ca;
+}
 .mod_readseed_grading_passagespace.mod_readseed_spotcheckmode {
-	background-color: green;
+    background-color: green;
 }
-.mod_readseed_grading_passageword.mod_readseed_aiunmatched{
-	background-color: lightgrey;
+.mod_readseed_grading_passageword.mod_readseed_aiunmatched {
+    background-color: lightgrey;
 }
-.mod_readseed_grading_passagespace.mod_readseed_aiunmatched{
-	background-color: lightgrey;
+.mod_readseed_grading_passagespace.mod_readseed_aiunmatched {
+    background-color: lightgrey;
 }
 .mod_readseed_grading_passageactions {
-	margin-top: 10px;
+    margin-top: 10px;
 }
 .mod_readseed_grading_passageactions > button {
-	margin: 5px;
+    margin: 5px;
 }
 
 .btn.mod_readseed_quickgrade_ok {
-	background-color: DodgerBlue; /* Blue background */
-	border: none; /* Remove borders */
-	color: white; /* White text */
-	padding: 10px 14px; /* Some padding */
-	font-size: 14px; /* Set a font size */
-	cursor: pointer; /* Mouse pointer on hover */
-	margin: 2px;
-	background-image: none;
+    background-color: DodgerBlue; /* Blue background */
+    border: none; /* Remove borders */
+    color: white; /* White text */
+    padding: 10px 14px; /* Some padding */
+    font-size: 14px; /* Set a font size */
+    cursor: pointer; /* Mouse pointer on hover */
+    margin: 2px;
+    background-image: none;
 }
 
 /* Darker background on mouse-over */
 .btn.mod_readseed_quickgrade_ok:hover {
-	background-color: RoyalBlue;
+    background-color: RoyalBlue;
 }
 
 .btn.mod_readseed_quickgrade_ng {
-	background-color: darkgrey; /* Blue background */
-	border: none; /* Remove borders */
-	color: white; /* White text */
-	padding: 10px 14px; /* Some padding */
-	font-size: 14px; /* Set a font size */
-	cursor: pointer; /* Mouse pointer on hover */
-	margin: 2px;
-	background-image: none;
+    background-color: darkgrey; /* Blue background */
+    border: none; /* Remove borders */
+    color: white; /* White text */
+    padding: 10px 14px; /* Some padding */
+    font-size: 14px; /* Set a font size */
+    cursor: pointer; /* Mouse pointer on hover */
+    margin: 2px;
+    background-image: none;
 }
 
 /* Darker background on mouse-over */
 .btn.mod_readseed_quickgrade_ng:hover {
-	background-color: grey;
+    background-color: grey;
 }
 div.mod_readseed_gradesadmin_cont {
-	margin: 8px;
+    margin: 8px;
+}
+
+/**
+ * App
+ */
+.mod_readseed-app-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+}
+
+.mod_readseed-app {
+    box-sizing: border-box;
+    min-width: 1024px;
+    max-width: 1024px;
+    min-height: 768px;
+    max-height: 768px;
+    background: white;
+    padding: 1em;
+    border: #efefef 3px solid;
+    border-radius: 10px;
+    font-size: 18px;
+    display: flex;
+}
+
+.mod_readseed-flex {
+    display: flex;
+}
+.mod_readseed-flex-1 {
+    flex: 1;
+}
+.mod_readseed-flex-col {
+    display: flex;
+    flex-direction: column;
+}
+.mod_readseed-flex-equal > * {
+    flex: 1;
+}
+.mod_readseed-flex-center {
+    justify-content: center;
+}
+.mod_readseed-flex-items-center {
+    align-items: center;
+}
+
+.mod_readseed-app .mod_readseed-passage {
+    line-height: 1.8em;
+}
+.mod_readseed-app .mod_readseed-passage-pic {
+    max-width: 200px;
+    margin: 9px 1em 1em 0;
+    float: left;
+}
+.mod_readseed-app .mod_readseed-passage-pic img {
+    max-width: 100%;
+}
+
+.mod_readseed-texttospeech {
+    position: relative;
+    display: flex;
+}
+.mod_readseed-texttospeech > div {
+    display: inline-block;
+}
+.mod_readseed-texttospeech a {
+    margin: 0 0 0 0.5em;
+    align-self: flex-start;
+}
+.mod_readseed-texttospeech a:focus,
+.mod_readseed-texttospeech a:hover {
+    text-decoration: none;
+}
+
+.mod_readseed-scrollview-wrapper,
+.mod_readseed-scrollview {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+.mod_readseed-scrollview {
+    overflow: hidden;
+    padding-top: 50px;
+}
+.mod_readseed-scrollview-before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    min-height: 50px;
+    background: linear-gradient(white, transparent 80%);
+}
+.mod_readseed-scrollview-actions {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding-top: 50px;
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(transparent, white 80%);
+}
+
+.mod_readseed-question-feedback {
+    text-align: center;
+}
+
+.mod_readseed-question-title {
+    line-height: 1.8em;
+    border-left: 3px solid #ccc;
+    padding-left: 20px;
+}
+.mod_readseed-answers {
+    margin: 1em;
+}
+.mod_readseed-answer {
+    color: #333;
+    display: block;
+    margin: 5px;
+    border-radius: 5px;
+    background-color: #eee;
+    padding: 10px 20px;
+    width: 100%;
+    box-sizing: border-box;
+    border: #eee 3px solid;
+}
+.mod_readseed-answer:hover,
+.mod_readseed-answer:focus {
+    color: inherit;
+    text-decoration: none;
+}
+.mod_readseed-answer.is-selected.is-incorrect {
+    border-color: red;
+}
+.mod_readseed-answer.is-correct {
+    border-color: green;
+}
+
+/*! * * * * * * * * * * * * * * * * * * * *\  
+  CSShake :: shake-rotate
+  v1.5.0
+  CSS classes to move your DOM
+  (c) 2015 @elrumordelaluz
+  http://elrumordelaluz.github.io/csshake/
+  Licensed under MIT
+\* * * * * * * * * * * * * * * * * * * * */
+
+@keyframes shake-rotate {
+    2% {
+        transform: translate(0, 0) rotate(-4.5deg);
+    }
+    4% {
+        transform: translate(0, 0) rotate(-1.5deg);
+    }
+    6% {
+        transform: translate(0, 0) rotate(-6.5deg);
+    }
+    8% {
+        transform: translate(0, 0) rotate(2.5deg);
+    }
+    10% {
+        transform: translate(0, 0) rotate(6.5deg);
+    }
+    12% {
+        transform: translate(0, 0) rotate(-3.5deg);
+    }
+    14% {
+        transform: translate(0, 0) rotate(7.5deg);
+    }
+    16% {
+        transform: translate(0, 0) rotate(2.5deg);
+    }
+    18% {
+        transform: translate(0, 0) rotate(7.5deg);
+    }
+    20% {
+        transform: translate(0, 0) rotate(3.5deg);
+    }
+    22% {
+        transform: translate(0, 0) rotate(1.5deg);
+    }
+    24% {
+        transform: translate(0, 0) rotate(1.5deg);
+    }
+    26% {
+        transform: translate(0, 0) rotate(0.5deg);
+    }
+    28% {
+        transform: translate(0, 0) rotate(6.5deg);
+    }
+    30% {
+        transform: translate(0, 0) rotate(-1.5deg);
+    }
+    32% {
+        transform: translate(0, 0) rotate(-1.5deg);
+    }
+    34% {
+        transform: translate(0, 0) rotate(2.5deg);
+    }
+    36% {
+        transform: translate(0, 0) rotate(-2.5deg);
+    }
+    38% {
+        transform: translate(0, 0) rotate(1.5deg);
+    }
+    40% {
+        transform: translate(0, 0) rotate(7.5deg);
+    }
+    42% {
+        transform: translate(0, 0) rotate(-2.5deg);
+    }
+    44% {
+        transform: translate(0, 0) rotate(-0.5deg);
+    }
+    46% {
+        transform: translate(0, 0) rotate(-6.5deg);
+    }
+    48% {
+        transform: translate(0, 0) rotate(0.5deg);
+    }
+    50% {
+        transform: translate(0, 0) rotate(1.5deg);
+    }
+    52% {
+        transform: translate(0, 0) rotate(1.5deg);
+    }
+    54% {
+        transform: translate(0, 0) rotate(4.5deg);
+    }
+    56% {
+        transform: translate(0, 0) rotate(-4.5deg);
+    }
+    58% {
+        transform: translate(0, 0) rotate(5.5deg);
+    }
+    60% {
+        transform: translate(0, 0) rotate(-3.5deg);
+    }
+    62% {
+        transform: translate(0, 0) rotate(-0.5deg);
+    }
+    64% {
+        transform: translate(0, 0) rotate(7.5deg);
+    }
+    66% {
+        transform: translate(0, 0) rotate(6.5deg);
+    }
+    68% {
+        transform: translate(0, 0) rotate(-6.5deg);
+    }
+    70% {
+        transform: translate(0, 0) rotate(-4.5deg);
+    }
+    72% {
+        transform: translate(0, 0) rotate(3.5deg);
+    }
+    74% {
+        transform: translate(0, 0) rotate(-2.5deg);
+    }
+    76% {
+        transform: translate(0, 0) rotate(-4.5deg);
+    }
+    78% {
+        transform: translate(0, 0) rotate(1.5deg);
+    }
+    80% {
+        transform: translate(0, 0) rotate(1.5deg);
+    }
+    82% {
+        transform: translate(0, 0) rotate(-2.5deg);
+    }
+    84% {
+        transform: translate(0, 0) rotate(-3.5deg);
+    }
+    86% {
+        transform: translate(0, 0) rotate(-6.5deg);
+    }
+    88% {
+        transform: translate(0, 0) rotate(-0.5deg);
+    }
+    90% {
+        transform: translate(0, 0) rotate(5.5deg);
+    }
+    92% {
+        transform: translate(0, 0) rotate(4.5deg);
+    }
+    94% {
+        transform: translate(0, 0) rotate(-1.5deg);
+    }
+    96% {
+        transform: translate(0, 0) rotate(1.5deg);
+    }
+    98% {
+        transform: translate(0, 0) rotate(-3.5deg);
+    }
+    0%,
+    100% {
+        transform: translate(0, 0) rotate(0);
+    }
+}
+
+.mod_readseed-shake {
+    animation-name: shake-rotate;
+    animation-duration: 100ms;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: 2;
 }

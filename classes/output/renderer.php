@@ -407,7 +407,7 @@ class renderer extends \plugin_renderer_base {
         return $ret_html;
     }
 
-    function load_app($cm, $readseed) {
+    function load_app($cm, $readseed, $lastattempt = null) {
         global $CFG, $USER;
 
         $config = get_config(constants::M_COMPONENT);
@@ -424,6 +424,7 @@ class renderer extends \plugin_renderer_base {
         $opts->passage = $readseed->passage;
         $opts->passagepictureurl = null;
         $opts->quizdata = $comptest->fetch_test_data_for_js();
+        $opts->attemptid = $lastattempt ? $lastattempt->id : null;  // When we resume an attempt.
 
         if ($readseed->passagepicture) {
             $opts->passagepictureurl = $comptest->fetch_media_url(constants::PASSAGEPICTURE_FILEAREA, (object) ['id' => 0]);
@@ -463,6 +464,7 @@ class renderer extends \plugin_renderer_base {
             'clickstartwhenready',
             'counttofive',
             'done',
+            'gofullscreen',
             'gotnosound',
             'nicereadinga',
             'pleasewaitafewseconds',
