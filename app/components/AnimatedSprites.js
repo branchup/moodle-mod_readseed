@@ -7,6 +7,7 @@ class AnimatedSprites extends PureComponent {
         fps: PropTypes.number,
         loop: PropTypes.bool,
         loopPause: PropTypes.number,
+        startPosition: PropTypes.arrayOf(PropTypes.number),
 
         spriteWidth: PropTypes.number.isRequired,
         spriteHeight: PropTypes.number.isRequired,
@@ -14,18 +15,24 @@ class AnimatedSprites extends PureComponent {
         totalSprites: PropTypes.number.isRequired,
 
         displayHeight: PropTypes.number,
-        displayWidth: PropTypes.number
+        displayWidth: PropTypes.number,
+
+        onFinish: PropTypes.func
     };
 
     static defaultProps = {
         fps: 16,
         loop: false,
-        loopPause: 0
+        loopPause: 0,
+        startPosition: [0, 0]
     };
 
-    state = {
-        pos: [0, 0]
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            pos: props.startPosition
+        };
+    }
 
     animate = () => {
         let [x, y] = this.state.pos;
@@ -38,21 +45,24 @@ class AnimatedSprites extends PureComponent {
 
         const total = y * this.props.spritesPerRow + x + 1;
         if (total > this.props.totalSprites) {
+            [x, y] = [0, 0];
+        }
+
+        if (this.props.startPosition[0] === x && this.props.startPosition[1] === y) {
             if (!this.props.loop) {
                 this.stopAnimation();
+                this.props.onFinish && this.props.onFinish();
                 return;
             }
 
             if (this.props.loopPause) {
                 this.stopAnimation();
                 this.loop = setTimeout(() => {
-                    this.setState({ pos: [0, 0] });
+                    this.setState({ pos: [x, y] });
                     this.startAnimation();
                 }, this.props.loopPause);
                 return;
             }
-
-            [x, y] = [0, 0];
         }
 
         this.setState({ pos: [x, y] });

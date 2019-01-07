@@ -64,7 +64,7 @@ class Home extends React.PureComponent {
         <TextToSpeech>
           <p className="text-center">{getString('counttofive', 'mod_readseed')}</p>
         </TextToSpeech>
-        <MrSeed />
+        <MrSeed width={600} />
       </div>
     );
   }
@@ -76,7 +76,7 @@ class Home extends React.PureComponent {
         <TextToSpeech>
           <p className="text-center">{getString('clickstartwhenready', 'mod_readseed')}</p>
         </TextToSpeech>
-        <MrSeed />
+        <MrSeed width={600} />
       </div>
     );
   }
@@ -98,7 +98,7 @@ class Home extends React.PureComponent {
           className="mod_readseed-flex-1 mod_readseed-flex-col mod_readseed-flex-items-center"
           style={{ justifyContent: 'space-around' }}
         >
-          <MrSeed />
+          <MrSeed width={600} />
           <div className="mod_readseed-flex-col mod_readseed-flex-items-center">
             {!this.props.submissionSubmitted ? <p>⏳ {getString('pleasewaitafewseconds', 'mod_readseed')}</p> : null}
             {this.props.submissionSubmitted ? (
@@ -129,7 +129,7 @@ class Home extends React.PureComponent {
         break;
       case 'reading':
         content = this.renderReading();
-        aboveRecorder = <MrSeed />;
+        aboveRecorder = <MrSeed width={300} />;
         break;
       case 'read':
         content = this.renderRead();

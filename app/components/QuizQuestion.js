@@ -139,7 +139,7 @@ class QuizQuestion extends React.PureComponent {
                         </button>
                     </div>
                     <div>
-                        <MrSeed />
+                        <MrSeed height={200} />
                     </div>
                 </div>
             </Fragment>
