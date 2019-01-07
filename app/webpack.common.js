@@ -8,7 +8,7 @@ module.exports = {
     app: ['@babel/polyfill', './index.js']
   },
   output: {
-    filename: '[name].js',
+    filename: '[name]-lazy.js',
     path: path.resolve(__dirname, '../amd/src'),
     libraryTarget: 'amd'
   },
