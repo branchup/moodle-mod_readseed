@@ -311,9 +311,9 @@ class renderer extends \plugin_renderer_base {
                 'data-localloader'=>'/mod/readseed/poodllloader.html',
                 'data-media'=>"audio",
                 'data-appid'=>constants::M_COMPONENT,
-                'data-type'=>"readaloud",//this is the recorder type, so until we make a readseed one, its readaloud
-                'data-width'=>"360",
-                'data-height'=>"210",
+                'data-type'=>"readseed",
+                'data-width'=>"240",
+                'data-height'=>"110",
                 //'data-iframeclass'=>"letsberesponsive",
                 'data-updatecontrol'=>constants::M_READING_AUDIO_URL,
                 'data-timelimit'=> $moduleinstance->timelimit,
@@ -438,9 +438,9 @@ class renderer extends \plugin_renderer_base {
         $recconfig->localloader = '/mod/readseed/poodllloader.html';
         $recconfig->media = "audio";
         $recconfig->appid = constants::M_COMPONENT;
-        $recconfig->type = "readaloud"; // The recorder type, so until we make a readseed one, it's readaloud.
-        $recconfig->width = "360";
-        $recconfig->height = "210";
+        $recconfig->type = "readseed"; // The recorder type, so until we make a readseed one, it's readaloud.
+        $recconfig->width = "240";
+        $recconfig->height = "110";
         $recconfig->iframeclass = "letsberesponsive";
         $recconfig->updatecontrol = constants::M_READING_AUDIO_URL;
         $recconfig->timelimit =  $readseed->timelimit;

@@ -76,7 +76,7 @@ class backup_readseed_activity_structure_step extends backup_activity_structure_
             constants::M_MODNAME, 'name','itemorder', 'type','visible','itemtext', 'itemformat','itemaudiofname',
             'customtext1', 'customtext1format','customtext2', 'customtext2format','customtext3',
             'customtext3format','customtext4', 'customtext4format','correctanswer',
-            'timecreated','timemodified','fbquestionkey','createdby','modifiedby'));
+            'timecreated','timemodified','rsquestionkey','createdby','modifiedby'));
 
 		
 		// Build the tree.
