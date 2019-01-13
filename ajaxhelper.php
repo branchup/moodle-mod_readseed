@@ -29,6 +29,7 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 
 use \mod_readseed\constants;
 use \mod_readseed\utils;
+use \mod_readseed\flower;
 use \mod_readseed\aigrade;
 
 $cmid = required_param('cmid',  PARAM_INT); // course_module ID, or
@@ -87,9 +88,9 @@ function process_quizresults($modulecontext,$readseed,$quizresults,$attemptid)
 
         // if (isset($useresults->qtextanswer1)){$attempt->qtextanswer1=$useresults->qtextanswer1;}
         //get users flower
-        $flower = utils::fetch_newflower();
+        $flower = flower::fetch_newflower();
         if($flower) {
-            $attempt->flowerid = $flower->id;
+            $attempt->flowerid = $flower['id'];
         }
         $result = $DB->update_record(constants::M_USERTABLE, $attempt);
         if($result) {

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Grade Now for readseed plugin
+ * Utils for readseed plugin
  *
  * @package    mod_readseed
  * @copyright  2015 Justin Hunt (poodllsupport@gmail.com)
