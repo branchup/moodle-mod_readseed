@@ -39,6 +39,7 @@ $rectime= optional_param('rectime', 0, PARAM_INT);
 $action= optional_param('action', 'readingresults', PARAM_TEXT);
 $attemptid= optional_param('attemptid', 0, PARAM_INT);
 $quizresults= optional_param('quizresults', '', PARAM_RAW);
+$flowerid = optional_param('flowerid', null, PARAM_INT);
 
 $ret =new stdClass();
 
@@ -61,12 +62,12 @@ switch($action){
         process_reading_results($modulecontext,$filename,$rectime,$readseed);
         break;
     case 'quizresults':
-        process_quizresults($modulecontext,$readseed, $quizresults, $attemptid);
+        process_quizresults($modulecontext,$readseed, $quizresults, $attemptid, $flowerid);
 }
 return;
 
 //save the data to Moodle.
-function process_quizresults($modulecontext,$readseed,$quizresults,$attemptid)
+function process_quizresults($modulecontext,$readseed,$quizresults,$attemptid, $flowerid)
 {
     global $USER, $DB;
 
@@ -88,10 +89,14 @@ function process_quizresults($modulecontext,$readseed,$quizresults,$attemptid)
 
         // if (isset($useresults->qtextanswer1)){$attempt->qtextanswer1=$useresults->qtextanswer1;}
         //get users flower
-        $flower = flower::fetch_newflower();
-        if($flower) {
+        if ($flowerid === null) {
+            $flower = flower::fetch_newflower();
             $attempt->flowerid = $flower['id'];
+        } else {
+            $attempt->flowerid = $flowerid;
+            $flower = flower::get_flower($flowerid);
         }
+
         $result = $DB->update_record(constants::M_USERTABLE, $attempt);
         if($result) {
             $returndata= $flower;

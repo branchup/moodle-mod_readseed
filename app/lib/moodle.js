@@ -6,13 +6,14 @@ export function getString(identifier, component = 'core', a) {
     return M.util.get_string(identifier, component, a);
 }
 
-export function sendQuizResults(wwwRoot, cmId, attemptId, results) {
+export function sendQuizResults(wwwRoot, cmId, attemptId, results, flowerid) {
     const promise = new Promise(function(resolve, reject) {
         const params = {};
         params.action = 'quizresults';
         params.attemptid = attemptId;
         params.cmid = cmId;
         params.quizresults = JSON.stringify(results);
+        params.flowerid = flowerid;
 
         const xhr = new XMLHttpRequest();
 
@@ -26,7 +27,11 @@ export function sendQuizResults(wwwRoot, cmId, attemptId, results) {
                 var payload = xhr.responseText;
                 var payloadobject = JSON.parse(payload);
                 if (payloadobject) {
-                    resolve(payloadobject);
+                    if (!payloadobject.success) {
+                        reject(payloadobject);
+                    } else {
+                        resolve(payloadobject.data);
+                    }
                 } else {
                     reject();
                 }

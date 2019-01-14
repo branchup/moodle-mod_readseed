@@ -9,15 +9,17 @@ class Passage extends React.PureComponent {
         text: PropTypes.string.isRequired,
         imageUrl: PropTypes.string,
 
+        blurred: PropTypes.bool,
         style: PropTypes.object,
         className: PropTypes.string
     };
 
     render() {
+        const { blurred } = this.props;
         return (
             <div style={{ position: 'relative', ...this.props.style }} className={this.props.className}>
                 <ScrollView>
-                    <div className="mod_readseed-passage">
+                    <div className={`mod_readseed-passage ${blurred ? 'blurred' : ''}`}>
                         <div>
                             {this.props.imageUrl ? (
                                 <div className="mod_readseed-passage-pic">

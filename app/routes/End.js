@@ -4,38 +4,49 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import MrSeed from '../components/MrSeed';
-import TextToSpeech from '../components/TextToSpeech';
+import AssetsLoader from '../components/AssetsLoader';
 import { getString } from '../lib/moodle';
-import { makeMrSeedBloom } from '../state/actions';
+import { makeMrSeedBloom, makeMrSeedReady } from '../state/actions';
 
 class End extends React.PureComponent {
     static propTypes = {
         name: PropTypes.string.isRequired,
-        makeMrSeedBloom: PropTypes.func.isRequired
+        makeMrSeedBloom: PropTypes.func.isRequired,
+        flowerUrl: PropTypes.string.isRequired
     };
 
     state = {};
 
     componentDidMount() {
-        this.props.makeMrSeedBloom();
+        this.props.makeMrSeedReady();
     }
+
+    makeBloom = () => {
+        // Add a slight delay or it all happens too fast.
+        setTimeout(this.props.makeMrSeedBloom, 1500);
+    };
 
     render() {
         return (
-            <div className="mod_readseed-flex-col mod_readseed-flex-equal mod_readseed-flex-items-center mod_readseed-flex-1">
-                <h3>{getString('goodjoba', 'mod_readseed', this.props.name)}</h3>
-                <TextToSpeech>
-                    <p>{getString('teacherwillcheck', 'mod_readseed')}</p>
-                </TextToSpeech>
-                <MrSeed />
+            <div className="mod_readseed-flex-col mod_readseed-flex-items-center mod_readseed-flex-1">
+                <AssetsLoader images={[this.props.flowerUrl]} onLoad={this.makeBloom} />
+                <h3>{getString('congratsyouread', 'mod_readseed', this.props.name)}</h3>
+                <div className="mod_readseed-flex-1 mod_readseed-flex mod_readseed-flex-items-center">
+                    <MrSeed height={500} />
+                </div>
+                <div style={{ margin: '20px' }}>
+                    <a className="btn btn-default" href={this.props.finishUrl}>
+                        Finish
+                    </a>
+                </div>
             </div>
         );
     }
 }
 
 const ConnectedEnd = connect(
-    state => ({ name: state.options.firstname }),
-    dispatch => bindActionCreators({ makeMrSeedBloom }, dispatch)
+    state => ({ name: state.options.name, flowerUrl: state.flower.picurl, finishUrl: state.options.courseurl }),
+    dispatch => bindActionCreators({ makeMrSeedBloom, makeMrSeedReady }, dispatch)
 )(End);
 
 export default ConnectedEnd;

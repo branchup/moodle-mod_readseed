@@ -336,6 +336,7 @@ div.mod_readseed_gradesadmin_cont {
     border-radius: 10px;
     font-size: 18px;
     display: flex;
+    position: relative;
 }
 
 .mod_readseed-flex {
@@ -360,6 +361,11 @@ div.mod_readseed_gradesadmin_cont {
 
 .mod_readseed-app .mod_readseed-passage {
     line-height: 1.8em;
+    font-size: 20px;
+}
+.mod_readseed-app .mod_readseed-passage.blurred {
+    color: transparent;
+    text-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
 }
 .mod_readseed-app .mod_readseed-passage-pic {
     max-width: 200px;
@@ -368,6 +374,9 @@ div.mod_readseed_gradesadmin_cont {
 }
 .mod_readseed-app .mod_readseed-passage-pic img {
     max-width: 100%;
+}
+.mod_readseed-app .mod_readseed-passage.blurred img {
+    filter: blur(5px);
 }
 
 .mod_readseed-texttospeech {
@@ -406,6 +415,7 @@ div.mod_readseed_gradesadmin_cont {
     height: 50px;
     min-height: 50px;
     background: linear-gradient(white, transparent 80%);
+    margin-top: -1px;
 }
 .mod_readseed-scrollview-actions {
     position: absolute;
@@ -416,10 +426,31 @@ div.mod_readseed_gradesadmin_cont {
     display: flex;
     justify-content: center;
     background: linear-gradient(transparent, white 80%);
+    margin-bottom: -1px;
 }
 
 .mod_readseed-question-feedback {
     text-align: center;
+}
+
+.mod_readseed-quiz-tracker {
+    margin-bottom: 1em;
+}
+.mod_readseed-quiz-tracker-el {
+    font-size: 14px;
+    padding: 0 4px;
+    margin-right: 3px;
+    display: inline-block;
+    border: 3px solid #ccc;
+}
+.mod_readseed-quiz-tracker-el.is-current {
+    border-color: #000;
+}
+.mod_readseed-quiz-tracker-el.is-answered {
+    border-color: hsl(348, 100%, 61%);
+}
+.mod_readseed-quiz-tracker-el.is-answered.is-correct {
+    border-color: hsl(141, 71%, 48%);
 }
 
 .mod_readseed-question-title {
@@ -432,25 +463,140 @@ div.mod_readseed_gradesadmin_cont {
 }
 .mod_readseed-answer {
     color: #333;
-    display: block;
+    display: flex;
     margin: 5px;
     border-radius: 5px;
     background-color: #eee;
-    padding: 10px 20px;
+    padding: 13px 23px;
     width: 100%;
+    position: relative;
     box-sizing: border-box;
-    border: #eee 3px solid;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
 }
+
 .mod_readseed-answer:hover,
 .mod_readseed-answer:focus {
     color: inherit;
     text-decoration: none;
 }
 .mod_readseed-answer.is-selected.is-incorrect {
-    border-color: red;
+    color: white;
+    background: hsl(348, 100%, 61%);
+    border-color: hsl(348, 100%, 61%);
+    padding-right: 42px;
 }
 .mod_readseed-answer.is-correct {
-    border-color: green;
+    color: white;
+    background: hsl(141, 71%, 48%);
+    border-color: hsl(141, 71%, 48%);
+    padding-right: 42px;
+}
+
+.mod_readseed-answer::after {
+    content: ' ';
+    position: absolute;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    background-repeat: no-repeat;
+}
+.mod_readseed-answer.is-correct::after {
+    background-image: url([[pix:mod_readseed|correct]]);
+}
+.mod_readseed-answer.is-selected.is-incorrect::after {
+    background-image: url([[pix:mod_readseed|incorrect]]);
+}
+
+.mod_readseed-btn-recorder-like {
+    border: 2px solid #000;
+    border-radius: 5px;
+    background: #cbf2dc;
+    color: #444;
+    font-size: xx-large;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 210px;
+    height: 80px;
+}
+
+/**
+ * Source: https://leaverou.github.io/bubbly/
+ */
+.mod_readseed-speech-bubble {
+    position: relative;
+    background: #f7f7f7;
+    border-radius: 0.4em;
+}
+.mod_readseed-speech-bubble:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-top-color: #f7f7f7;
+    border-bottom: 0;
+    border-left: 0;
+    margin-left: -5px;
+    margin-bottom: -10px;
+}
+
+.mod_readseed-speech-bubble-content {
+    text-align: center;
+    font-size: 25px;
+    padding: 25px;
+    min-height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 35px;
+}
+.mod_readseed-speech-bubble.size-medium .mod_readseed-speech-bubble-content {
+    font-size: 20px;
+    padding: 10px;
+    min-height: auto;
+    line-height: 25px;
+}
+
+.mod_readseed-bloom {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mod_readseed-bloom img {
+    position: absolute;
+
+    /* The delay is set according to the blooming animation */
+    animation: readseed-bloom;
+    animation-duration: 1200ms;
+}
+
+.mod_readseed-mr-seed-wrapper {
+    position: relative;
+}
+
+.mod_readseed-mr-seed-wrapper .mod_readseed-speech-bubble {
+    position: absolute;
+    right: 0;
+    width: 50%;
+}
+
+@keyframes readseed-bloom {
+    0% {
+        opacity: 0;
+    }
+    70% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 /*! * * * * * * * * * * * * * * * * * * * *\  

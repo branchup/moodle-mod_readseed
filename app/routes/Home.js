@@ -8,9 +8,8 @@ import { getString } from '../lib/moodle';
 import Recorder from '../components/Recorder';
 import MrSeed from '../components/MrSeed';
 import Passage from '../components/Passage';
-import TextToSpeech from '../components/TextToSpeech';
 
-import { sendSubmission, wakeUpMrSeed, makeMrSeedListen, makeMrSeedReady } from '../state/actions';
+import { sendSubmission, wakeUpMrSeed, makeMrSeedListen, makeMrSeedReady, makeMrSeedGiveThumbsUp } from '../state/actions';
 
 class Home extends React.PureComponent {
   static propTypes = {
@@ -19,6 +18,7 @@ class Home extends React.PureComponent {
     wakeUpMrSeed: PropTypes.func.isRequired,
     makeMrSeedListen: PropTypes.func.isRequired,
     makeMrSeedReady: PropTypes.func.isRequired,
+    makeMrSeedGiveThumbsUp: PropTypes.func.isRequired,
     sendSubmission: PropTypes.func.isRequired,
     submissionSubmitted: PropTypes.bool.isRequired
   };
@@ -27,23 +27,37 @@ class Home extends React.PureComponent {
     step: 'init',
     startedAt: null,
     recordTime: null,
-    submitting: false
+    submitting: false,
+    countdown: '...'
   };
 
   componentDidMount() {
-    // Simulate that we've got a confirmation that the microphone works.
-    setTimeout(this.handleMicrophoneConfirmed, 5000);
+    // On load, if we have an attempt ID, it means we're resuming the quiz.
+    if (this.props.attemptId) {
+      this.setState({ step: 'toquiz' });
+    }
   }
 
-  handleMicrophoneConfirmed = () => {
-    this.setState({
-      step: 'ready'
-    });
-    this.props.wakeUpMrSeed();
-  };
+  componentDidUpdate(prevProps) {
+    if (!prevProps.submissionSubmitted && this.props.submissionSubmitted) {
+      this.props.makeMrSeedGiveThumbsUp();
+    }
+  }
 
   handleRecorderMessage = message => {
-    if (message.type === 'recording' && message.action === 'started') {
+    // console.log(message);
+    if (message.type === 'recorderstatus' && message.status === 'testbuttonready') {
+      this.setState({ step: 'waiting' });
+    } else if (message.type === 'recorderstatus' && message.status === 'testbuttonrecording') {
+      this.setState({ step: 'testing' });
+      this.props.makeMrSeedListen();
+    } else if (message.type === 'recorderstatus' && message.status === 'startbuttonready') {
+      this.setState({ step: 'ready' });
+      this.props.makeMrSeedGiveThumbsUp();
+    } else if (message.type === 'countdownstatus') {
+      this.setState({ step: 'countdown', countdown: message.status });
+      this.props.makeMrSeedReady();
+    } else if (message.type === 'recording' && message.action === 'started') {
       this.setState({ step: 'reading', startedAt: new Date() });
       this.props.makeMrSeedListen();
     } else if (message.type === 'recording' && message.action === 'stopped') {
@@ -58,93 +72,112 @@ class Home extends React.PureComponent {
   };
 
   renderInit() {
-    return (
-      <div className="mod_readseed-flex-1 mod_readseed-flex-col mod_readseed-flex-items-center mod_readseed-flex-equal">
-        <h3>{getString('hia', 'mod_readseed', this.props.name)}</h3>
-        <TextToSpeech>
-          <p className="text-center">{getString('counttofive', 'mod_readseed')}</p>
-        </TextToSpeech>
-        <MrSeed width={600} />
-      </div>
-    );
+    return <MrSeed width={600} />;
+  }
+
+  renderWaiting() {
+    return <MrSeed width={600} message={getString('hellopushspeak', 'mod_readseed')} />;
+  }
+
+  renderTesting() {
+    return <MrSeed width={600} message={getString('sayyourname', 'mod_readseed')} />;
   }
 
   renderReady() {
-    return (
-      <div className="mod_readseed-flex-1 mod_readseed-flex-col mod_readseed-flex-items-center mod_readseed-flex-equal">
-        <h3>{getString('hia', 'mod_readseed', this.props.name)}</h3>
-        <TextToSpeech>
-          <p className="text-center">{getString('clickstartwhenready', 'mod_readseed')}</p>
-        </TextToSpeech>
-        <MrSeed width={600} />
-      </div>
-    );
+    return <MrSeed width={600} message={getString('hellonpushstart', 'mod_readseed', this.props.name)} />;
   }
 
   renderReading() {
     return (
-      <div className="mod_readseed-flex-1 mod_readseed-flex-col mod_readseed-flex-items-center">
-        <h3>{getString('aisreading', 'mod_readseed', this.props.name)}</h3>
-        <Passage className="mod_readseed-flex-1 mod_readseed-flex-col" style={{ width: '100%' }} />
+      <div className={`mod_readseed-flex-1 mod_readseed-flex-col mod_readseed-flex-items-center`} style={{ alignSelf: 'stretch' }}>
+        <Passage
+          className="mod_readseed-flex-1 mod_readseed-flex-col"
+          style={{ width: '100%' }}
+          blurred={this.state.step === 'countdown'}
+        />
       </div>
     );
   }
 
   renderRead() {
-    return (
-      <div className="mod_readseed-flex-1 mod_readseed-flex-col mod_readseed-flex-items-center">
-        <h3>{getString('nicereadinga', 'mod_readseed', this.props.name)}</h3>
-        <div
-          className="mod_readseed-flex-1 mod_readseed-flex-col mod_readseed-flex-items-center"
-          style={{ justifyContent: 'space-around' }}
-        >
-          <MrSeed width={600} />
-          <div className="mod_readseed-flex-col mod_readseed-flex-items-center">
-            {!this.props.submissionSubmitted ? <p>⏳ {getString('pleasewaitafewseconds', 'mod_readseed')}</p> : null}
-            {this.props.submissionSubmitted ? (
-              <Fragment>
-                <TextToSpeech>
-                  <p>{getString('readpassageagainandanswerquestions', 'mod_readseed')}</p>
-                </TextToSpeech>
-                <button disabled={!this.props.submissionSubmitted} onClick={() => this.setState({ step: 'toquiz' })}>
-                  Go
-                </button>
-              </Fragment>
-            ) : null}
-          </div>
-        </div>
-      </div>
-    );
+    const message = this.props.submissionSubmitted
+      ? getString('greatjobnpushnext', 'mod_readseed', this.props.name)
+      : getString('pleasewait', 'mod_readseed');
+    return <MrSeed width={600} message={message} />;
   }
 
   render() {
     let content;
-    let aboveRecorder;
+    let sideContent;
+    let nextBtn;
+    let showRecorder = true;
     switch (this.state.step) {
       case 'init':
         content = this.renderInit();
         break;
+      case 'waiting':
+        content = this.renderWaiting();
+        break;
+      case 'testing':
+        content = this.renderTesting();
+        break;
       case 'ready':
         content = this.renderReady();
         break;
+      case 'countdown':
+        content = this.renderReading();
+        sideContent = <MrSeed width={300} message={`${this.state.countdown}`} bubbleSize="medium" />;
+        break;
       case 'reading':
         content = this.renderReading();
-        aboveRecorder = <MrSeed width={300} />;
+        sideContent = <MrSeed width={300} />;
         break;
       case 'read':
         content = this.renderRead();
+        showRecorder = !this.props.submissionSubmitted;
+        nextBtn = !this.props.submissionSubmitted ? null : (
+          <a
+            href="#"
+            className="mod_readseed-btn-recorder-like"
+            onClick={e => {
+              e.preventDefault();
+              this.setState({ step: 'toquiz' });
+            }}
+          >
+            {getString('next')}
+          </a>
+        );
         break;
       case 'toquiz':
+        showRecorder = false;
         content = <Redirect to={'/quiz'} />;
         break;
     }
+
+    const recorderStyles = sideContent
+      ? {
+          position: 'absolute',
+          right: '30px',
+          bottom: '50px'
+        }
+      : {
+          position: 'absolute',
+          right: '210px',
+          bottom: '240px'
+        };
+
     return (
-      <div className="mod_readseed-flex mod_readseed-flex-1">
-        <div className="mod_readseed-flex mod_readseed-flex-1">{content}</div>
-        <div className="mod_readseed-flex-col mod_readseed-flex-items-center">
-          {aboveRecorder}
-          <Recorder onMessageReceived={this.handleRecorderMessage} />
+      <div className="mod_readseed-flex mod_readseed-flex-1 mod_readseed-flex-items-center">
+        <div
+          className="mod_readseed-flex mod_readseed-flex-1"
+          style={{ alignSelf: 'stretch', alignItems: 'center', justifyContent: 'center' }}
+        >
+          {content}
         </div>
+        <div className="mod_readseed-flex-col mod_readseed-flex-items-center" style={{ minWidth: sideContent ? '' : '200px' }}>
+          {sideContent}
+        </div>
+        <div style={recorderStyles}>{showRecorder ? <Recorder onMessageReceived={this.handleRecorderMessage} /> : nextBtn}</div>
       </div>
     );
   }
@@ -152,7 +185,8 @@ class Home extends React.PureComponent {
 
 const ConnectedHome = connect(
   state => ({ name: state.options.firstname, submissionSubmitted: state.submissionSubmitted, attemptId: state.attemptId }),
-  dispatch => bindActionCreators({ sendSubmission, wakeUpMrSeed, makeMrSeedListen, makeMrSeedReady }, dispatch)
+  dispatch =>
+    bindActionCreators({ sendSubmission, wakeUpMrSeed, makeMrSeedListen, makeMrSeedReady, makeMrSeedGiveThumbsUp }, dispatch)
 )(Home);
 
 export default ConnectedHome;

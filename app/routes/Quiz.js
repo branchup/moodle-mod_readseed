@@ -7,6 +7,7 @@ import { Redirect } from 'react-router';
 import QuizQuestion from '../components/QuizQuestion';
 import { setQuestionAnswer, setCurrentQuestionNumber, submitQuizResults } from '../state/actions';
 import Passage from '../components/Passage';
+import QuizTracker from '../components/QuizTracker';
 import { getString } from '../lib/moodle';
 
 class Quiz extends React.PureComponent {
@@ -56,20 +57,25 @@ class Quiz extends React.PureComponent {
         }
 
         return (
-            <div className="mod_readseed-flex-col mod_readseed-flex-1">
-                <h3>{getString('readagainandanswer', 'mod_readseed')}</h3>
-                <div className="mod_readseed-flex mod_readseed-flex-1">
-                    <Passage style={{ flex: 2 }} />
-                    <div className="mod_readseed-flex-1" style={{ marginLeft: '1em' }}>
-                        <QuizQuestion
-                            key={this.props.currentQuestionNumber}
-                            question={this.getQuestion()}
-                            canSelectAnswer={!this.getQuestionAnswer()}
-                            selectedAnswer={this.getQuestionAnswer()}
-                            onAnswerSelected={this.handleAnswerSelected}
-                            onGoToNextQuestion={this.handleGoToNextQuestion}
-                        />
-                    </div>
+            <div className="mod_readseed-flex mod_readseed-flex-1">
+                <div className="mod_readseed-flex-col" style={{ flex: 2 }}>
+                    <h3>{getString('readagainandanswer', 'mod_readseed')}</h3>
+                    <Passage style={{ flex: 1 }} />
+                </div>
+                <div className="mod_readseed-flex-1" style={{ marginLeft: '1em' }}>
+                    <QuizTracker
+                        questions={this.props.questions}
+                        answers={this.props.answers}
+                        currentQuestionNumber={this.props.currentQuestionNumber}
+                    />
+                    <QuizQuestion
+                        key={this.props.currentQuestionNumber}
+                        question={this.getQuestion()}
+                        canSelectAnswer={!this.getQuestionAnswer()}
+                        selectedAnswer={this.getQuestionAnswer()}
+                        onAnswerSelected={this.handleAnswerSelected}
+                        onGoToNextQuestion={this.handleGoToNextQuestion}
+                    />
                 </div>
             </div>
         );

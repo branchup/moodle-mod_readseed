@@ -42,26 +42,41 @@ class flower{
         global $CFG, $USER,$DB;
         $flowers = self::fetch_flowers();
         $used_flowerids = $DB->get_fieldset_select(constants::M_USERTABLE, 'flowerid', 'userid =:userid', array('userid'=>$USER->id));
-        //if we have used flowers and we have not used all our flowers, we reduce the flowers array to the ones we have not allocated yet
-        if($used_flowerids){
-            if(count($used_flowerids)< count($flowers)) {
-                foreach ($used_flowerids as $used_flowerid) {
-                    $flowers.splice($used_flowerid, 1);
-                }
-            }
+
+        //if we have used flowers and we have not used all our flowers, we reduce the flowers array to the ones we have not allocated yet.
+        $candidates = array_filter($flowers, function($flower) use ($used_flowerids) {
+            return !in_array($flower['id'], $used_flowerids);
+        });
+        if (empty($candidates)) {
+            $candidates = $flowers;
         }
+
         $flowerid = array_rand($flowers);
         $flower= $flowers[$flowerid];
-        $flower['picurl']=$CFG->wwwroot .'/mod/readseed/flowers/' . $flower['id']. '/p_' . $flower['name'] . '.png';
         return $flower;
     }
     public static function fetch_flowers(){
-        return array(
+        $flowers = array(
             0=>array('id'=>0,'name'=>'ninja'),
             1=>array('id'=>1,'name'=>'cat'),
             2=>array('id'=>2,'name'=>'pippi'),
             3=>array('id'=>3,'name'=>'robot'),
             4=>array('id'=>4,'name'=>'carracer')
         );
+
+        return array_map(function($flower) {
+            $flower['picurl'] = static::get_flower_url($flower);
+            return $flower;
+        }, $flowers);
+    }
+
+    public static function get_flower($flowerid) {
+        $flowers = static::fetch_flowers();
+        return $flowers[$flowerid];
+    }
+
+    public static function get_flower_url($flower) {
+        global $CFG;
+        return $CFG->wwwroot . '/mod/readseed/flowers/' . $flower['id'] . '/p_' . $flower['name'] . '.png';
     }
 }

@@ -28,12 +28,18 @@ export const submitQuizResults = () => {
   return (dispatch, getState) => {
     const state = getState();
     const { wwwroot, cmid } = state.options;
-    const { attemptId } = state;
+    const { attemptId, flower } = state;
     const { answers } = state.quiz;
     if (!attemptId) {
       throw new Error('Whoops, attempt ID unknown!');
     }
-    Moodle.sendQuizResults(wwwroot, cmid, attemptId, { answers });
+    Moodle.sendQuizResults(wwwroot, cmid, attemptId, { answers }, flower.id)
+      .then(flower => {
+        dispatch(setFlower(flower));
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 };
 
@@ -45,3 +51,4 @@ export const makeMrSeedListen = () => setMrSeedMode(seed.LISTENING);
 export const makeMrSeedReady = () => setMrSeedMode(seed.READY);
 export const makeMrSeedBloom = () => setMrSeedMode(seed.BLOOM);
 export const wakeUpMrSeed = () => setMrSeedMode(seed.WAKE_UP);
+export const setFlower = createAction('setFlower');

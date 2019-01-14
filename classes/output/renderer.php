@@ -11,6 +11,7 @@ namespace mod_readseed\output;
 use html_writer;
 use \mod_readseed\constants;
 use \mod_readseed\utils;
+use \mod_readseed\flower;
 use \mod_readseed\comprehensiontest;
 
 class renderer extends \plugin_renderer_base {
@@ -419,12 +420,14 @@ class renderer extends \plugin_renderer_base {
         $opts->cmid = $cm->id;
         $opts->firstname = $USER->firstname;
         $opts->wwwroot = $CFG->wwwroot;
+        $opts->courseurl = $CFG->wwwroot . '/course/view.php?id=' . $cm->course;
         $opts->name = $readseed->name;
         $opts->welcome = $readseed->welcome;
         $opts->passage = $readseed->passage;
         $opts->passagepictureurl = null;
         $opts->quizdata = $comptest->fetch_test_data_for_js();
         $opts->attemptid = $lastattempt ? $lastattempt->id : null;  // When we resume an attempt.
+        $opts->flower = $lastattempt ? flower::get_flower($lastattempt->flowerid) : flower::fetch_newflower();
 
         if ($readseed->passagepicture) {
             $opts->passagepictureurl = $comptest->fetch_media_url(constants::PASSAGEPICTURE_FILEAREA, (object) ['id' => 0]);
@@ -462,15 +465,19 @@ class renderer extends \plugin_renderer_base {
             'aisreading',
             'beginreading',
             'clickstartwhenready',
+            'congratsyouread',
             'counttofive',
             'done',
             'gofullscreen',
             'gotnosound',
+            'greatjobnpushnext',
+            'hellopushspeak',
+            'hellonpushstart',
             'nicereadinga',
-            'pleasewaitafewseconds',
+            'pleasewait',
             'readagainandanswer',
             'readpassageagainandanswerquestions',
-            'hia',
+            'sayyourname',
             'teacherwillcheck',
             'goodjoba',
             'thanksa',

@@ -17,6 +17,8 @@ class TextToSpeech extends React.PureComponent {
   };
 
   render() {
+    // Disable for now.
+    return this.props.children;
     return (
       <div className="mod_readseed-texttospeech">
         <div ref={this.divRef}>{this.props.children}</div>

@@ -101,24 +101,6 @@ class QuizQuestion extends React.PureComponent {
         return answer && answer == this.props.question.correctanswer;
     }
 
-    renderFeedback() {
-        if (!this.props.selectedAnswer) {
-            return;
-        }
-        if (!this.isCorrectAnswer(this.props.selectedAnswer)) {
-            return (
-                <div className="mod_readseed-question-feedback">
-                    <p>🛑 {getString('thisisnotcorrect', 'mod_readseed')}</p>
-                </div>
-            );
-        }
-        return (
-            <div className="mod_readseed-question-feedback">
-                <p>🌟 {getString('thisiscorrect', 'mod_readseed')}</p>
-            </div>
-        );
-    }
-
     render() {
         const { question } = this.props;
         return (
@@ -131,10 +113,12 @@ class QuizQuestion extends React.PureComponent {
                         onAnswerSelected={this.handleAnswerSelected}
                     />
                 </div>
-                {this.renderFeedback()}
                 <div className="mod_readseed-flex-col mod_readseed-flex-items-center">
                     <div>
-                        <button className={`${this.state.shakeButton ? 'mod_readseed-shake' : ''}`} onClick={this.handleNextClick}>
+                        <button
+                            className={`btn btn-default ${this.state.shakeButton ? 'mod_readseed-shake' : ''}`}
+                            onClick={this.handleNextClick}
+                        >
                             {getString('next')}
                         </button>
                     </div>

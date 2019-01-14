@@ -15871,13 +15871,14 @@ function getString(identifier) {
   var a = arguments.length > 2 ? arguments[2] : undefined;
   return M.util.get_string(identifier, component, a);
 }
-function sendQuizResults(wwwRoot, cmId, attemptId, results) {
+function sendQuizResults(wwwRoot, cmId, attemptId, results, flowerid) {
   var promise = new Promise(function (resolve, reject) {
     var params = {};
     params.action = 'quizresults';
     params.attemptid = attemptId;
     params.cmid = cmId;
     params.quizresults = JSON.stringify(results);
+    params.flowerid = flowerid;
     var xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange = function (e) {
@@ -15891,7 +15892,11 @@ function sendQuizResults(wwwRoot, cmId, attemptId, results) {
         var payloadobject = JSON.parse(payload);
 
         if (payloadobject) {
-          resolve(payloadobject);
+          if (!payloadobject.success) {
+            reject(payloadobject);
+          } else {
+            resolve(payloadobject.data);
+          }
         } else {
           reject();
         }
@@ -16249,6 +16254,23 @@ var ConnectedRecorder = connect_connect(function (state) {
   };
 })(Recorder_Recorder);
 /* harmony default export */ var components_Recorder = (ConnectedRecorder);
+// CONCATENATED MODULE: ./components/SpeechBubble.js
+
+
+
+var SpeechBubble_SpeechBubble = function SpeechBubble(props) {
+  return react_default.a.createElement("div", {
+    className: "mod_readseed-speech-bubble ".concat(props.size ? "size-".concat(props.size) : '')
+  }, react_default.a.createElement("div", {
+    className: "mod_readseed-speech-bubble-content"
+  }, props.text));
+};
+
+SpeechBubble_SpeechBubble.propTypes = {
+  text: prop_types_default.a.string.isRequired,
+  size: prop_types_default.a.oneOf(['medium'])
+};
+/* harmony default export */ var components_SpeechBubble = (SpeechBubble_SpeechBubble);
 // CONCATENATED MODULE: ./components/AnimatedSprites.js
 function AnimatedSprites_typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { AnimatedSprites_typeof = function _typeof(obj) { return typeof obj; }; } else { AnimatedSprites_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return AnimatedSprites_typeof(obj); }
 
@@ -16529,7 +16551,8 @@ var actions_submitQuizResults = function submitQuizResults() {
     var _state$options = state.options,
         wwwroot = _state$options.wwwroot,
         cmid = _state$options.cmid;
-    var attemptId = state.attemptId;
+    var attemptId = state.attemptId,
+        flower = state.flower;
     var answers = state.quiz.answers;
 
     if (!attemptId) {
@@ -16538,6 +16561,10 @@ var actions_submitQuizResults = function submitQuizResults() {
 
     sendQuizResults(wwwroot, cmid, attemptId, {
       answers: answers
+    }, flower.id).then(function (flower) {
+      dispatch(setFlower(flower));
+    }).catch(function (err) {
+      console.log(err);
     });
   };
 }; // Mr Seed.
@@ -16565,6 +16592,7 @@ var actions_makeMrSeedBloom = function makeMrSeedBloom() {
 var actions_wakeUpMrSeed = function wakeUpMrSeed() {
   return setMrSeedMode(WAKE_UP);
 };
+var setFlower = createAction('setFlower');
 // CONCATENATED MODULE: ./components/MrSeed.js
 function MrSeed_typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { MrSeed_typeof = function _typeof(obj) { return typeof obj; }; } else { MrSeed_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return MrSeed_typeof(obj); }
 
@@ -16596,6 +16624,7 @@ function MrSeed_defineProperty(obj, key, value) { if (key in obj) { Object.defin
 
 
 
+
 var bloomUrl = getImageUrl('sprites/bloom', 'mod_readseed');
 var idleUrl = getImageUrl('sprites/idle', 'mod_readseed');
 var sleepingUrl = getImageUrl('sprites/sleeping', 'mod_readseed');
@@ -16618,49 +16647,6 @@ function (_React$PureComponent) {
   }
 
   MrSeed_createClass(MrSeed, [{
-    key: "renderEmoji",
-    value: function renderEmoji() {
-      var emoji;
-
-      switch (this.props.mode) {
-        case BLOOM:
-          emoji = '🌻';
-          break;
-
-        case SLEEPING:
-          emoji = '😴';
-          break;
-
-        case WAKE_UP:
-          emoji = '🥴';
-          break;
-
-        case LISTENING:
-          emoji = '🤭';
-          break;
-
-        case SMH:
-          emoji = '🙄';
-          break;
-
-        case THUMBS_UP:
-          emoji = '😍';
-          break;
-
-        case READY:
-        default:
-          emoji = '🙂';
-          break;
-      }
-
-      return react_default.a.createElement("div", {
-        style: {
-          fontSize: '50px',
-          margin: '1em'
-        }
-      }, emoji);
-    }
-  }, {
     key: "renderSprite",
     value: function renderSprite() {
       var _this = this;
@@ -16698,12 +16684,20 @@ function (_React$PureComponent) {
 
       switch (this.props.mode) {
         case BLOOM:
-          return react_default.a.createElement(components_AnimatedSprites, MrSeed_extends({
+          return react_default.a.createElement("div", {
+            className: "mod_readseed-bloom"
+          }, react_default.a.createElement("img", {
+            src: this.props.flowerUrl,
+            alt: "",
+            style: {
+              maxHeight: displayHeight
+            }
+          }), react_default.a.createElement(components_AnimatedSprites, MrSeed_extends({
             src: bloomUrl
           }, commonProps, {
             spritesPerRow: 5,
             totalSprites: 20
-          }));
+          })));
 
         case SLEEPING:
           return react_default.a.createElement(components_AnimatedSprites, MrSeed_extends({
@@ -16761,8 +16755,13 @@ function (_React$PureComponent) {
     key: "render",
     value: function render() {
       return react_default.a.createElement("div", {
+        className: "mod_readseed-mr-seed-wrapper"
+      }, this.props.message ? react_default.a.createElement(components_SpeechBubble, {
+        text: this.props.message,
+        size: this.props.bubbleSize
+      }) : null, react_default.a.createElement("div", {
         className: "mod_readseed-flex-col mod_readseed-flex-items-center"
-      }, this.renderSprite());
+      }, this.renderSprite()));
     }
   }]);
 
@@ -16772,13 +16771,15 @@ function (_React$PureComponent) {
 MrSeed_defineProperty(MrSeed_MrSeed, "propTypes", {
   mode: prop_types_default.a.oneOf([BLOOM, SLEEPING, WAKE_UP, READY, LISTENING, SMH, THUMBS_UP]).isRequired,
   width: prop_types_default.a.number,
-  height: prop_types_default.a.height
+  height: prop_types_default.a.number,
+  bubbleSize: prop_types_default.a.string,
+  message: prop_types_default.a.string
 });
 
 var ConnectedSeed = connect_connect(function (state) {
   return {
     mode: state.mrseed.mode,
-    flowerUrl: null
+    flowerUrl: state.flower.picurl
   };
 }, function (dispatch) {
   return bindActionCreators({
@@ -17025,13 +17026,14 @@ function (_React$PureComponent) {
   Passage_createClass(Passage, [{
     key: "render",
     value: function render() {
+      var blurred = this.props.blurred;
       return react_default.a.createElement("div", {
         style: Passage_objectSpread({
           position: 'relative'
         }, this.props.style),
         className: this.props.className
       }, react_default.a.createElement(components_ScrollView, null, react_default.a.createElement("div", {
-        className: "mod_readseed-passage"
+        className: "mod_readseed-passage ".concat(blurred ? 'blurred' : '')
       }, react_default.a.createElement("div", null, this.props.imageUrl ? react_default.a.createElement("div", {
         className: "mod_readseed-passage-pic"
       }, react_default.a.createElement("img", {
@@ -17048,6 +17050,7 @@ function (_React$PureComponent) {
 Passage_defineProperty(Passage_Passage, "propTypes", {
   text: prop_types_default.a.string.isRequired,
   imageUrl: prop_types_default.a.string,
+  blurred: prop_types_default.a.bool,
   style: prop_types_default.a.object,
   className: prop_types_default.a.string
 });
@@ -17059,6 +17062,320 @@ var ConnectedPassage = connect_connect(function (state) {
   };
 })(Passage_Passage);
 /* harmony default export */ var components_Passage = (ConnectedPassage);
+// CONCATENATED MODULE: ./routes/Home.js
+function Home_typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { Home_typeof = function _typeof(obj) { return typeof obj; }; } else { Home_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return Home_typeof(obj); }
+
+function Home_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function Home_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function Home_createClass(Constructor, protoProps, staticProps) { if (protoProps) Home_defineProperties(Constructor.prototype, protoProps); if (staticProps) Home_defineProperties(Constructor, staticProps); return Constructor; }
+
+function Home_possibleConstructorReturn(self, call) { if (call && (Home_typeof(call) === "object" || typeof call === "function")) { return call; } return Home_assertThisInitialized(self); }
+
+function Home_getPrototypeOf(o) { Home_getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return Home_getPrototypeOf(o); }
+
+function Home_inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) Home_setPrototypeOf(subClass, superClass); }
+
+function Home_setPrototypeOf(o, p) { Home_setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return Home_setPrototypeOf(o, p); }
+
+function Home_assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function Home_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+
+
+
+
+
+
+
+
+
+var Home_Home =
+/*#__PURE__*/
+function (_React$PureComponent) {
+  Home_inherits(Home, _React$PureComponent);
+
+  function Home() {
+    var _getPrototypeOf2;
+
+    var _this;
+
+    Home_classCallCheck(this, Home);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = Home_possibleConstructorReturn(this, (_getPrototypeOf2 = Home_getPrototypeOf(Home)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+    Home_defineProperty(Home_assertThisInitialized(Home_assertThisInitialized(_this)), "state", {
+      step: 'init',
+      startedAt: null,
+      recordTime: null,
+      submitting: false,
+      countdown: '...'
+    });
+
+    Home_defineProperty(Home_assertThisInitialized(Home_assertThisInitialized(_this)), "handleRecorderMessage", function (message) {
+      // console.log(message);
+      if (message.type === 'recorderstatus' && message.status === 'testbuttonready') {
+        _this.setState({
+          step: 'waiting'
+        });
+      } else if (message.type === 'recorderstatus' && message.status === 'testbuttonrecording') {
+        _this.setState({
+          step: 'testing'
+        });
+
+        _this.props.makeMrSeedListen();
+      } else if (message.type === 'recorderstatus' && message.status === 'startbuttonready') {
+        _this.setState({
+          step: 'ready'
+        });
+
+        _this.props.makeMrSeedGiveThumbsUp();
+      } else if (message.type === 'countdownstatus') {
+        _this.setState({
+          step: 'countdown',
+          countdown: message.status
+        });
+
+        _this.props.makeMrSeedReady();
+      } else if (message.type === 'recording' && message.action === 'started') {
+        _this.setState({
+          step: 'reading',
+          startedAt: new Date()
+        });
+
+        _this.props.makeMrSeedListen();
+      } else if (message.type === 'recording' && message.action === 'stopped') {
+        var recordTime = new Date().getTime() - _this.state.startedAt.getTime();
+
+        recordTime = recordTime > 0 ? Math.ceil(recordTime / 1000) : recordTime;
+
+        _this.setState({
+          step: 'read',
+          recordTime: recordTime
+        });
+
+        _this.props.makeMrSeedReady();
+      } else if (message.type === 'awaitingprocessing' && !_this.state.submitting) {
+        _this.setState({
+          submitting: true
+        });
+
+        _this.props.sendSubmission(message.mediaurl, _this.state.recordTime);
+      }
+    });
+
+    return _this;
+  }
+
+  Home_createClass(Home, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      // On load, if we have an attempt ID, it means we're resuming the quiz.
+      if (this.props.attemptId) {
+        this.setState({
+          step: 'toquiz'
+        });
+      }
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(prevProps) {
+      if (!prevProps.submissionSubmitted && this.props.submissionSubmitted) {
+        this.props.makeMrSeedGiveThumbsUp();
+      }
+    }
+  }, {
+    key: "renderInit",
+    value: function renderInit() {
+      return react_default.a.createElement(components_MrSeed, {
+        width: 600
+      });
+    }
+  }, {
+    key: "renderWaiting",
+    value: function renderWaiting() {
+      return react_default.a.createElement(components_MrSeed, {
+        width: 600,
+        message: getString('hellopushspeak', 'mod_readseed')
+      });
+    }
+  }, {
+    key: "renderTesting",
+    value: function renderTesting() {
+      return react_default.a.createElement(components_MrSeed, {
+        width: 600,
+        message: getString('sayyourname', 'mod_readseed')
+      });
+    }
+  }, {
+    key: "renderReady",
+    value: function renderReady() {
+      return react_default.a.createElement(components_MrSeed, {
+        width: 600,
+        message: getString('hellonpushstart', 'mod_readseed', this.props.name)
+      });
+    }
+  }, {
+    key: "renderReading",
+    value: function renderReading() {
+      return react_default.a.createElement("div", {
+        className: "mod_readseed-flex-1 mod_readseed-flex-col mod_readseed-flex-items-center",
+        style: {
+          alignSelf: 'stretch'
+        }
+      }, react_default.a.createElement(components_Passage, {
+        className: "mod_readseed-flex-1 mod_readseed-flex-col",
+        style: {
+          width: '100%'
+        },
+        blurred: this.state.step === 'countdown'
+      }));
+    }
+  }, {
+    key: "renderRead",
+    value: function renderRead() {
+      var message = this.props.submissionSubmitted ? getString('greatjobnpushnext', 'mod_readseed', this.props.name) : getString('pleasewait', 'mod_readseed');
+      return react_default.a.createElement(components_MrSeed, {
+        width: 600,
+        message: message
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this2 = this;
+
+      var content;
+      var sideContent;
+      var nextBtn;
+      var showRecorder = true;
+
+      switch (this.state.step) {
+        case 'init':
+          content = this.renderInit();
+          break;
+
+        case 'waiting':
+          content = this.renderWaiting();
+          break;
+
+        case 'testing':
+          content = this.renderTesting();
+          break;
+
+        case 'ready':
+          content = this.renderReady();
+          break;
+
+        case 'countdown':
+          content = this.renderReading();
+          sideContent = react_default.a.createElement(components_MrSeed, {
+            width: 300,
+            message: "".concat(this.state.countdown),
+            bubbleSize: "medium"
+          });
+          break;
+
+        case 'reading':
+          content = this.renderReading();
+          sideContent = react_default.a.createElement(components_MrSeed, {
+            width: 300
+          });
+          break;
+
+        case 'read':
+          content = this.renderRead();
+          showRecorder = !this.props.submissionSubmitted;
+          nextBtn = !this.props.submissionSubmitted ? null : react_default.a.createElement("a", {
+            href: "#",
+            className: "mod_readseed-btn-recorder-like",
+            onClick: function onClick(e) {
+              e.preventDefault();
+
+              _this2.setState({
+                step: 'toquiz'
+              });
+            }
+          }, getString('next'));
+          break;
+
+        case 'toquiz':
+          showRecorder = false;
+          content = react_default.a.createElement(es_Redirect, {
+            to: '/quiz'
+          });
+          break;
+      }
+
+      var recorderStyles = sideContent ? {
+        position: 'absolute',
+        right: '30px',
+        bottom: '50px'
+      } : {
+        position: 'absolute',
+        right: '210px',
+        bottom: '240px'
+      };
+      return react_default.a.createElement("div", {
+        className: "mod_readseed-flex mod_readseed-flex-1 mod_readseed-flex-items-center"
+      }, react_default.a.createElement("div", {
+        className: "mod_readseed-flex mod_readseed-flex-1",
+        style: {
+          alignSelf: 'stretch',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }
+      }, content), react_default.a.createElement("div", {
+        className: "mod_readseed-flex-col mod_readseed-flex-items-center",
+        style: {
+          minWidth: sideContent ? '' : '200px'
+        }
+      }, sideContent), react_default.a.createElement("div", {
+        style: recorderStyles
+      }, showRecorder ? react_default.a.createElement(components_Recorder, {
+        onMessageReceived: this.handleRecorderMessage
+      }) : nextBtn));
+    }
+  }]);
+
+  return Home;
+}(react_default.a.PureComponent);
+
+Home_defineProperty(Home_Home, "propTypes", {
+  attemptId: prop_types_default.a.any,
+  name: prop_types_default.a.string.isRequired,
+  wakeUpMrSeed: prop_types_default.a.func.isRequired,
+  makeMrSeedListen: prop_types_default.a.func.isRequired,
+  makeMrSeedReady: prop_types_default.a.func.isRequired,
+  makeMrSeedGiveThumbsUp: prop_types_default.a.func.isRequired,
+  sendSubmission: prop_types_default.a.func.isRequired,
+  submissionSubmitted: prop_types_default.a.bool.isRequired
+});
+
+var ConnectedHome = connect_connect(function (state) {
+  return {
+    name: state.options.firstname,
+    submissionSubmitted: state.submissionSubmitted,
+    attemptId: state.attemptId
+  };
+}, function (dispatch) {
+  return bindActionCreators({
+    sendSubmission: actions_sendSubmission,
+    wakeUpMrSeed: actions_wakeUpMrSeed,
+    makeMrSeedListen: actions_makeMrSeedListen,
+    makeMrSeedReady: actions_makeMrSeedReady,
+    makeMrSeedGiveThumbsUp: actions_makeMrSeedGiveThumbsUp
+  }, dispatch);
+})(Home_Home);
+/* harmony default export */ var routes_Home = (ConnectedHome);
 // CONCATENATED MODULE: ./components/TextToSpeech.js
 function TextToSpeech_typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { TextToSpeech_typeof = function _typeof(obj) { return typeof obj; }; } else { TextToSpeech_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return TextToSpeech_typeof(obj); }
 
@@ -17109,6 +17426,8 @@ function (_React$PureComponent) {
   TextToSpeech_createClass(TextToSpeech, [{
     key: "render",
     value: function render() {
+      // Disable for now.
+      return this.props.children;
       return react_default.a.createElement("div", {
         className: "mod_readseed-texttospeech"
       }, react_default.a.createElement("div", {
@@ -17126,241 +17445,6 @@ function (_React$PureComponent) {
 TextToSpeech_defineProperty(TextToSpeech_TextToSpeech, "propTypes", {});
 
 /* harmony default export */ var components_TextToSpeech = (TextToSpeech_TextToSpeech);
-// CONCATENATED MODULE: ./routes/Home.js
-function Home_typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { Home_typeof = function _typeof(obj) { return typeof obj; }; } else { Home_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return Home_typeof(obj); }
-
-function Home_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function Home_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function Home_createClass(Constructor, protoProps, staticProps) { if (protoProps) Home_defineProperties(Constructor.prototype, protoProps); if (staticProps) Home_defineProperties(Constructor, staticProps); return Constructor; }
-
-function Home_possibleConstructorReturn(self, call) { if (call && (Home_typeof(call) === "object" || typeof call === "function")) { return call; } return Home_assertThisInitialized(self); }
-
-function Home_getPrototypeOf(o) { Home_getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return Home_getPrototypeOf(o); }
-
-function Home_inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) Home_setPrototypeOf(subClass, superClass); }
-
-function Home_setPrototypeOf(o, p) { Home_setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return Home_setPrototypeOf(o, p); }
-
-function Home_assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function Home_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-
-
-
-
-
-
-
-
-
-
-
-
-var Home_Home =
-/*#__PURE__*/
-function (_React$PureComponent) {
-  Home_inherits(Home, _React$PureComponent);
-
-  function Home() {
-    var _getPrototypeOf2;
-
-    var _this;
-
-    Home_classCallCheck(this, Home);
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = Home_possibleConstructorReturn(this, (_getPrototypeOf2 = Home_getPrototypeOf(Home)).call.apply(_getPrototypeOf2, [this].concat(args)));
-
-    Home_defineProperty(Home_assertThisInitialized(Home_assertThisInitialized(_this)), "state", {
-      step: 'init',
-      startedAt: null,
-      recordTime: null,
-      submitting: false
-    });
-
-    Home_defineProperty(Home_assertThisInitialized(Home_assertThisInitialized(_this)), "handleMicrophoneConfirmed", function () {
-      _this.setState({
-        step: 'ready'
-      });
-
-      _this.props.wakeUpMrSeed();
-    });
-
-    Home_defineProperty(Home_assertThisInitialized(Home_assertThisInitialized(_this)), "handleRecorderMessage", function (message) {
-      if (message.type === 'recording' && message.action === 'started') {
-        _this.setState({
-          step: 'reading',
-          startedAt: new Date()
-        });
-
-        _this.props.makeMrSeedListen();
-      } else if (message.type === 'recording' && message.action === 'stopped') {
-        var recordTime = new Date().getTime() - _this.state.startedAt.getTime();
-
-        recordTime = recordTime > 0 ? Math.ceil(recordTime / 1000) : recordTime;
-
-        _this.setState({
-          step: 'read',
-          recordTime: recordTime
-        });
-
-        _this.props.makeMrSeedReady();
-      } else if (message.type === 'awaitingprocessing' && !_this.state.submitting) {
-        _this.setState({
-          submitting: true
-        });
-
-        _this.props.sendSubmission(message.mediaurl, _this.state.recordTime);
-      }
-    });
-
-    return _this;
-  }
-
-  Home_createClass(Home, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      // Simulate that we've got a confirmation that the microphone works.
-      setTimeout(this.handleMicrophoneConfirmed, 5000);
-    }
-  }, {
-    key: "renderInit",
-    value: function renderInit() {
-      return react_default.a.createElement("div", {
-        className: "mod_readseed-flex-1 mod_readseed-flex-col mod_readseed-flex-items-center mod_readseed-flex-equal"
-      }, react_default.a.createElement("h3", null, getString('hia', 'mod_readseed', this.props.name)), react_default.a.createElement(components_TextToSpeech, null, react_default.a.createElement("p", {
-        className: "text-center"
-      }, getString('counttofive', 'mod_readseed'))), react_default.a.createElement(components_MrSeed, {
-        width: 600
-      }));
-    }
-  }, {
-    key: "renderReady",
-    value: function renderReady() {
-      return react_default.a.createElement("div", {
-        className: "mod_readseed-flex-1 mod_readseed-flex-col mod_readseed-flex-items-center mod_readseed-flex-equal"
-      }, react_default.a.createElement("h3", null, getString('hia', 'mod_readseed', this.props.name)), react_default.a.createElement(components_TextToSpeech, null, react_default.a.createElement("p", {
-        className: "text-center"
-      }, getString('clickstartwhenready', 'mod_readseed'))), react_default.a.createElement(components_MrSeed, {
-        width: 600
-      }));
-    }
-  }, {
-    key: "renderReading",
-    value: function renderReading() {
-      return react_default.a.createElement("div", {
-        className: "mod_readseed-flex-1 mod_readseed-flex-col mod_readseed-flex-items-center"
-      }, react_default.a.createElement("h3", null, getString('aisreading', 'mod_readseed', this.props.name)), react_default.a.createElement(components_Passage, {
-        className: "mod_readseed-flex-1 mod_readseed-flex-col",
-        style: {
-          width: '100%'
-        }
-      }));
-    }
-  }, {
-    key: "renderRead",
-    value: function renderRead() {
-      var _this2 = this;
-
-      return react_default.a.createElement("div", {
-        className: "mod_readseed-flex-1 mod_readseed-flex-col mod_readseed-flex-items-center"
-      }, react_default.a.createElement("h3", null, getString('nicereadinga', 'mod_readseed', this.props.name)), react_default.a.createElement("div", {
-        className: "mod_readseed-flex-1 mod_readseed-flex-col mod_readseed-flex-items-center",
-        style: {
-          justifyContent: 'space-around'
-        }
-      }, react_default.a.createElement(components_MrSeed, {
-        width: 600
-      }), react_default.a.createElement("div", {
-        className: "mod_readseed-flex-col mod_readseed-flex-items-center"
-      }, !this.props.submissionSubmitted ? react_default.a.createElement("p", null, "\u23F3 ", getString('pleasewaitafewseconds', 'mod_readseed')) : null, this.props.submissionSubmitted ? react_default.a.createElement(react["Fragment"], null, react_default.a.createElement(components_TextToSpeech, null, react_default.a.createElement("p", null, getString('readpassageagainandanswerquestions', 'mod_readseed'))), react_default.a.createElement("button", {
-        disabled: !this.props.submissionSubmitted,
-        onClick: function onClick() {
-          return _this2.setState({
-            step: 'toquiz'
-          });
-        }
-      }, "Go")) : null)));
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var content;
-      var aboveRecorder;
-
-      switch (this.state.step) {
-        case 'init':
-          content = this.renderInit();
-          break;
-
-        case 'ready':
-          content = this.renderReady();
-          break;
-
-        case 'reading':
-          content = this.renderReading();
-          aboveRecorder = react_default.a.createElement(components_MrSeed, {
-            width: 300
-          });
-          break;
-
-        case 'read':
-          content = this.renderRead();
-          break;
-
-        case 'toquiz':
-          content = react_default.a.createElement(es_Redirect, {
-            to: '/quiz'
-          });
-          break;
-      }
-
-      return react_default.a.createElement("div", {
-        className: "mod_readseed-flex mod_readseed-flex-1"
-      }, react_default.a.createElement("div", {
-        className: "mod_readseed-flex mod_readseed-flex-1"
-      }, content), react_default.a.createElement("div", {
-        className: "mod_readseed-flex-col mod_readseed-flex-items-center"
-      }, aboveRecorder, react_default.a.createElement(components_Recorder, {
-        onMessageReceived: this.handleRecorderMessage
-      })));
-    }
-  }]);
-
-  return Home;
-}(react_default.a.PureComponent);
-
-Home_defineProperty(Home_Home, "propTypes", {
-  attemptId: prop_types_default.a.any,
-  name: prop_types_default.a.string.isRequired,
-  wakeUpMrSeed: prop_types_default.a.func.isRequired,
-  makeMrSeedListen: prop_types_default.a.func.isRequired,
-  makeMrSeedReady: prop_types_default.a.func.isRequired,
-  sendSubmission: prop_types_default.a.func.isRequired,
-  submissionSubmitted: prop_types_default.a.bool.isRequired
-});
-
-var ConnectedHome = connect_connect(function (state) {
-  return {
-    name: state.options.firstname,
-    submissionSubmitted: state.submissionSubmitted,
-    attemptId: state.attemptId
-  };
-}, function (dispatch) {
-  return bindActionCreators({
-    sendSubmission: actions_sendSubmission,
-    wakeUpMrSeed: actions_wakeUpMrSeed,
-    makeMrSeedListen: actions_makeMrSeedListen,
-    makeMrSeedReady: actions_makeMrSeedReady
-  }, dispatch);
-})(Home_Home);
-/* harmony default export */ var routes_Home = (ConnectedHome);
 // CONCATENATED MODULE: ./components/Question.js
 function Question_typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { Question_typeof = function _typeof(obj) { return typeof obj; }; } else { Question_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return Question_typeof(obj); }
 
@@ -17628,23 +17712,6 @@ function (_React$PureComponent) {
       return answer && answer == this.props.question.correctanswer;
     }
   }, {
-    key: "renderFeedback",
-    value: function renderFeedback() {
-      if (!this.props.selectedAnswer) {
-        return;
-      }
-
-      if (!this.isCorrectAnswer(this.props.selectedAnswer)) {
-        return react_default.a.createElement("div", {
-          className: "mod_readseed-question-feedback"
-        }, react_default.a.createElement("p", null, "\uD83D\uDED1 ", getString('thisisnotcorrect', 'mod_readseed')));
-      }
-
-      return react_default.a.createElement("div", {
-        className: "mod_readseed-question-feedback"
-      }, react_default.a.createElement("p", null, "\uD83C\uDF1F ", getString('thisiscorrect', 'mod_readseed')));
-    }
-  }, {
     key: "render",
     value: function render() {
       var question = this.props.question;
@@ -17653,10 +17720,10 @@ function (_React$PureComponent) {
         correctAnswer: question.correctanswer,
         selectedAnswer: this.props.selectedAnswer,
         onAnswerSelected: this.handleAnswerSelected
-      })), this.renderFeedback(), react_default.a.createElement("div", {
+      })), react_default.a.createElement("div", {
         className: "mod_readseed-flex-col mod_readseed-flex-items-center"
       }, react_default.a.createElement("div", null, react_default.a.createElement("button", {
-        className: "".concat(this.state.shakeButton ? 'mod_readseed-shake' : ''),
+        className: "btn btn-default ".concat(this.state.shakeButton ? 'mod_readseed-shake' : ''),
         onClick: this.handleNextClick
       }, getString('next'))), react_default.a.createElement("div", null, react_default.a.createElement(components_MrSeed, {
         height: 200
@@ -17690,6 +17757,51 @@ var ConnectedQuizQuestion = connect_connect(null, function (dispatch) {
   }, dispatch);
 })(QuizQuestion_QuizQuestion);
 /* harmony default export */ var components_QuizQuestion = (ConnectedQuizQuestion);
+// CONCATENATED MODULE: ./components/QuizTracker.js
+
+
+
+var QuizTracker_QuizTrackerElement = function QuizTrackerElement(props) {
+  var number = props.number,
+      answered = props.answered,
+      current = props.current,
+      correct = props.correct;
+  var classes = "mod_readseed-quiz-tracker-el ".concat(answered ? 'is-answered' : '', " ").concat(correct ? 'is-correct' : '', " ").concat(current ? 'is-current' : '');
+  return react_default.a.createElement("div", {
+    className: classes
+  }, number);
+};
+
+QuizTracker_QuizTrackerElement.propTypes = {
+  number: prop_types_default.a.number.isRequired,
+  answered: prop_types_default.a.bool.isRequired,
+  correct: prop_types_default.a.bool.isRequired,
+  current: prop_types_default.a.bool.isRequired
+};
+
+var QuizTracker_QuizTracker = function QuizTracker(props) {
+  return react_default.a.createElement("div", {
+    className: "mod_readseed-quiz-tracker"
+  }, props.questions.map(function (q) {
+    var current = q.number === props.currentQuestionNumber;
+    var answered = typeof props.answers[q.number] !== 'undefined';
+    var correct = answered && props.answers[q.number] == q.correctanswer;
+    return react_default.a.createElement(QuizTracker_QuizTrackerElement, {
+      number: q.number,
+      current: current,
+      answered: answered,
+      correct: correct,
+      key: q.number
+    });
+  }));
+};
+
+QuizTracker_QuizTracker.propTypes = {
+  questions: prop_types_default.a.arrayOf(prop_types_default.a.object).isRequired,
+  answers: prop_types_default.a.arrayOf(prop_types_default.a.number).isRequired,
+  currentQuestionNumber: prop_types_default.a.number.isRequired
+};
+/* harmony default export */ var components_QuizTracker = (QuizTracker_QuizTracker);
 // CONCATENATED MODULE: ./routes/Quiz.js
 function Quiz_typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { Quiz_typeof = function _typeof(obj) { return typeof obj; }; } else { Quiz_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return Quiz_typeof(obj); }
 
@@ -17710,6 +17822,7 @@ function Quiz_setPrototypeOf(o, p) { Quiz_setPrototypeOf = Object.setPrototypeOf
 function Quiz_assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function Quiz_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -17792,26 +17905,33 @@ function (_React$PureComponent) {
       }
 
       return react_default.a.createElement("div", {
-        className: "mod_readseed-flex-col mod_readseed-flex-1"
-      }, react_default.a.createElement("h3", null, getString('readagainandanswer', 'mod_readseed')), react_default.a.createElement("div", {
         className: "mod_readseed-flex mod_readseed-flex-1"
-      }, react_default.a.createElement(components_Passage, {
+      }, react_default.a.createElement("div", {
+        className: "mod_readseed-flex-col",
         style: {
           flex: 2
         }
-      }), react_default.a.createElement("div", {
+      }, react_default.a.createElement("h3", null, getString('readagainandanswer', 'mod_readseed')), react_default.a.createElement(components_Passage, {
+        style: {
+          flex: 1
+        }
+      })), react_default.a.createElement("div", {
         className: "mod_readseed-flex-1",
         style: {
           marginLeft: '1em'
         }
-      }, react_default.a.createElement(components_QuizQuestion, {
+      }, react_default.a.createElement(components_QuizTracker, {
+        questions: this.props.questions,
+        answers: this.props.answers,
+        currentQuestionNumber: this.props.currentQuestionNumber
+      }), react_default.a.createElement(components_QuizQuestion, {
         key: this.props.currentQuestionNumber,
         question: this.getQuestion(),
         canSelectAnswer: !this.getQuestionAnswer(),
         selectedAnswer: this.getQuestionAnswer(),
         onAnswerSelected: this.handleAnswerSelected,
         onGoToNextQuestion: this.handleGoToNextQuestion
-      }))));
+      })));
     }
   }]);
 
@@ -17843,91 +17963,6 @@ var ConnectedQuiz = connect_connect(function (state) {
   }, dispatch);
 })(Quiz_Quiz);
 /* harmony default export */ var routes_Quiz = (ConnectedQuiz);
-// CONCATENATED MODULE: ./routes/End.js
-function End_typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { End_typeof = function _typeof(obj) { return typeof obj; }; } else { End_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return End_typeof(obj); }
-
-function End_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function End_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function End_createClass(Constructor, protoProps, staticProps) { if (protoProps) End_defineProperties(Constructor.prototype, protoProps); if (staticProps) End_defineProperties(Constructor, staticProps); return Constructor; }
-
-function End_possibleConstructorReturn(self, call) { if (call && (End_typeof(call) === "object" || typeof call === "function")) { return call; } return End_assertThisInitialized(self); }
-
-function End_getPrototypeOf(o) { End_getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return End_getPrototypeOf(o); }
-
-function End_inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) End_setPrototypeOf(subClass, superClass); }
-
-function End_setPrototypeOf(o, p) { End_setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return End_setPrototypeOf(o, p); }
-
-function End_assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function End_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-
-
-
-
-
-
-
-
-
-var End_End =
-/*#__PURE__*/
-function (_React$PureComponent) {
-  End_inherits(End, _React$PureComponent);
-
-  function End() {
-    var _getPrototypeOf2;
-
-    var _this;
-
-    End_classCallCheck(this, End);
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = End_possibleConstructorReturn(this, (_getPrototypeOf2 = End_getPrototypeOf(End)).call.apply(_getPrototypeOf2, [this].concat(args)));
-
-    End_defineProperty(End_assertThisInitialized(End_assertThisInitialized(_this)), "state", {});
-
-    return _this;
-  }
-
-  End_createClass(End, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      this.props.makeMrSeedBloom();
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      return react_default.a.createElement("div", {
-        className: "mod_readseed-flex-col mod_readseed-flex-equal mod_readseed-flex-items-center mod_readseed-flex-1"
-      }, react_default.a.createElement("h3", null, getString('goodjoba', 'mod_readseed', this.props.name)), react_default.a.createElement(components_TextToSpeech, null, react_default.a.createElement("p", null, getString('teacherwillcheck', 'mod_readseed'))), react_default.a.createElement(components_MrSeed, null));
-    }
-  }]);
-
-  return End;
-}(react_default.a.PureComponent);
-
-End_defineProperty(End_End, "propTypes", {
-  name: prop_types_default.a.string.isRequired,
-  makeMrSeedBloom: prop_types_default.a.func.isRequired
-});
-
-var ConnectedEnd = connect_connect(function (state) {
-  return {
-    name: state.options.firstname
-  };
-}, function (dispatch) {
-  return bindActionCreators({
-    makeMrSeedBloom: actions_makeMrSeedBloom
-  }, dispatch);
-})(End_End);
-/* harmony default export */ var routes_End = (ConnectedEnd);
 // CONCATENATED MODULE: ./components/AssetsLoader.js
 function AssetsLoader_typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { AssetsLoader_typeof = function _typeof(obj) { return typeof obj; }; } else { AssetsLoader_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return AssetsLoader_typeof(obj); }
 
@@ -18051,6 +18086,114 @@ AssetsLoader_defineProperty(AssetsLoader, "defaultProps", {
 });
 
 /* harmony default export */ var components_AssetsLoader = (AssetsLoader);
+// CONCATENATED MODULE: ./routes/End.js
+function End_typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { End_typeof = function _typeof(obj) { return typeof obj; }; } else { End_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return End_typeof(obj); }
+
+function End_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function End_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function End_createClass(Constructor, protoProps, staticProps) { if (protoProps) End_defineProperties(Constructor.prototype, protoProps); if (staticProps) End_defineProperties(Constructor, staticProps); return Constructor; }
+
+function End_possibleConstructorReturn(self, call) { if (call && (End_typeof(call) === "object" || typeof call === "function")) { return call; } return End_assertThisInitialized(self); }
+
+function End_getPrototypeOf(o) { End_getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return End_getPrototypeOf(o); }
+
+function End_inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) End_setPrototypeOf(subClass, superClass); }
+
+function End_setPrototypeOf(o, p) { End_setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return End_setPrototypeOf(o, p); }
+
+function End_assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function End_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+
+
+
+
+
+
+
+var End_End =
+/*#__PURE__*/
+function (_React$PureComponent) {
+  End_inherits(End, _React$PureComponent);
+
+  function End() {
+    var _getPrototypeOf2;
+
+    var _this;
+
+    End_classCallCheck(this, End);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = End_possibleConstructorReturn(this, (_getPrototypeOf2 = End_getPrototypeOf(End)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+    End_defineProperty(End_assertThisInitialized(End_assertThisInitialized(_this)), "state", {});
+
+    End_defineProperty(End_assertThisInitialized(End_assertThisInitialized(_this)), "makeBloom", function () {
+      // Add a slight delay or it all happens too fast.
+      setTimeout(_this.props.makeMrSeedBloom, 1500);
+    });
+
+    return _this;
+  }
+
+  End_createClass(End, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.props.makeMrSeedReady();
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return react_default.a.createElement("div", {
+        className: "mod_readseed-flex-col mod_readseed-flex-items-center mod_readseed-flex-1"
+      }, react_default.a.createElement(components_AssetsLoader, {
+        images: [this.props.flowerUrl],
+        onLoad: this.makeBloom
+      }), react_default.a.createElement("h3", null, getString('congratsyouread', 'mod_readseed', this.props.name)), react_default.a.createElement("div", {
+        className: "mod_readseed-flex-1 mod_readseed-flex mod_readseed-flex-items-center"
+      }, react_default.a.createElement(components_MrSeed, {
+        height: 500
+      })), react_default.a.createElement("div", {
+        style: {
+          margin: '20px'
+        }
+      }, react_default.a.createElement("a", {
+        className: "btn btn-default",
+        href: this.props.finishUrl
+      }, "Finish")));
+    }
+  }]);
+
+  return End;
+}(react_default.a.PureComponent);
+
+End_defineProperty(End_End, "propTypes", {
+  name: prop_types_default.a.string.isRequired,
+  makeMrSeedBloom: prop_types_default.a.func.isRequired,
+  flowerUrl: prop_types_default.a.string.isRequired
+});
+
+var ConnectedEnd = connect_connect(function (state) {
+  return {
+    name: state.options.name,
+    flowerUrl: state.flower.picurl,
+    finishUrl: state.options.courseurl
+  };
+}, function (dispatch) {
+  return bindActionCreators({
+    makeMrSeedBloom: actions_makeMrSeedBloom,
+    makeMrSeedReady: actions_makeMrSeedReady
+  }, dispatch);
+})(End_End);
+/* harmony default export */ var routes_End = (ConnectedEnd);
 // CONCATENATED MODULE: ./App.js
 function App_typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { App_typeof = function _typeof(obj) { return typeof obj; }; } else { App_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return App_typeof(obj); }
 
@@ -18431,7 +18574,7 @@ thunk.withExtraArgument = createThunkMiddleware;
 
 /* harmony default export */ var redux_thunk_es = (thunk);
 // CONCATENATED MODULE: ./state/store.js
-var _handleActions2;
+var _handleActions, _handleActions2;
 
 function store_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { store_defineProperty(target, key, source[key]); }); } return target; }
 
@@ -18443,12 +18586,16 @@ function store_defineProperty(obj, key, value) { if (key in obj) { Object.define
 
 
 
-var actionsReducer = handleActions(store_defineProperty({}, submissionSubmitted, function (state, action) {
+var actionsReducer = handleActions((_handleActions = {}, store_defineProperty(_handleActions, submissionSubmitted, function (state, action) {
   return store_objectSpread({}, state, {
     submissionSubmitted: true,
     attemptId: action.payload.attemptId
   });
-}), {});
+}), store_defineProperty(_handleActions, setFlower, function (state, action) {
+  return store_objectSpread({}, state, {
+    flower: action.payload
+  });
+}), _handleActions), {});
 var quizReducer = handleActions((_handleActions2 = {}, store_defineProperty(_handleActions2, setCurrentQuestionNumber, function (state, action) {
   return store_objectSpread({}, state, {
     currentQuestionNumber: action.payload.questionNumber
@@ -18459,7 +18606,7 @@ var quizReducer = handleActions((_handleActions2 = {}, store_defineProperty(_han
   });
 }), _handleActions2), {});
 var mrSeedInitialState = {
-  mode: SLEEPING
+  mode: READY
 };
 var mrSeedReducer = handleActions(store_defineProperty({}, setMrSeedMode, function (state, action) {
   return store_objectSpread({}, state, {
@@ -18485,6 +18632,7 @@ function getStore(options, recorderConfig) {
       config: recorderConfig
     },
     attemptId: options.attemptid ? options.attemptid : null,
+    flower: options.flower,
     submissionSubmitted: false,
     quiz: {
       currentQuestionNumber: null,

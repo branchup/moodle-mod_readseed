@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
+import SpeechBubble from './SpeechBubble';
 import AnimatedSprites from './AnimatedSprites';
 import { makeMrSeedReady } from '../state/actions';
 import { getImageUrl } from '../lib/moodle';
@@ -24,37 +25,11 @@ class MrSeed extends React.PureComponent {
     mode: PropTypes.oneOf([seed.BLOOM, seed.SLEEPING, seed.WAKE_UP, seed.READY, seed.LISTENING, seed.SMH, seed.THUMBS_UP])
       .isRequired,
     width: PropTypes.number,
-    height: PropTypes.height
-  };
+    height: PropTypes.number,
 
-  renderEmoji() {
-    let emoji;
-    switch (this.props.mode) {
-      case seed.BLOOM:
-        emoji = '🌻';
-        break;
-      case seed.SLEEPING:
-        emoji = '😴';
-        break;
-      case seed.WAKE_UP:
-        emoji = '🥴';
-        break;
-      case seed.LISTENING:
-        emoji = '🤭';
-        break;
-      case seed.SMH:
-        emoji = '🙄';
-        break;
-      case seed.THUMBS_UP:
-        emoji = '😍';
-        break;
-      case seed.READY:
-      default:
-        emoji = '🙂';
-        break;
-    }
-    return <div style={{ fontSize: '50px', margin: '1em' }}>{emoji}</div>;
-  }
+    bubbleSize: PropTypes.string,
+    message: PropTypes.string
+  };
 
   renderSprite() {
     const spriteWidth = 688;
@@ -86,7 +61,12 @@ class MrSeed extends React.PureComponent {
 
     switch (this.props.mode) {
       case seed.BLOOM:
-        return <AnimatedSprites src={bloomUrl} {...commonProps} spritesPerRow={5} totalSprites={20} />;
+        return (
+          <div className="mod_readseed-bloom">
+            <img src={this.props.flowerUrl} alt="" style={{ maxHeight: displayHeight }} />
+            <AnimatedSprites src={bloomUrl} {...commonProps} spritesPerRow={5} totalSprites={20} />
+          </div>
+        );
       case seed.SLEEPING:
         return <AnimatedSprites src={sleepingUrl} {...commonProps} spritesPerRow={5} totalSprites={20} loop />;
       case seed.WAKE_UP:
@@ -123,13 +103,18 @@ class MrSeed extends React.PureComponent {
   }
 
   render() {
-    return <div className="mod_readseed-flex-col mod_readseed-flex-items-center">{this.renderSprite()}</div>;
+    return (
+      <div className="mod_readseed-mr-seed-wrapper">
+        {this.props.message ? <SpeechBubble text={this.props.message} size={this.props.bubbleSize} /> : null}
+        <div className="mod_readseed-flex-col mod_readseed-flex-items-center">{this.renderSprite()}</div>
+      </div>
+    );
   }
 }
 
 const ConnectedSeed = connect(
   state => {
-    return { mode: state.mrseed.mode, flowerUrl: null };
+    return { mode: state.mrseed.mode, flowerUrl: state.flower.picurl };
   },
   dispatch => bindActionCreators({ makeMrSeedReady }, dispatch)
 )(MrSeed);

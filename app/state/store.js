@@ -14,7 +14,11 @@ const actionsReducer = handleActions(
         submissionSubmitted: true,
         attemptId: action.payload.attemptId
       };
-    }
+    },
+    [actions.setFlower]: (state, action) => ({
+      ...state,
+      flower: action.payload
+    })
   },
   {}
 );
@@ -37,7 +41,7 @@ const quizReducer = handleActions(
 );
 
 const mrSeedInitialState = {
-  mode: seed.SLEEPING
+  mode: seed.READY
 };
 
 const mrSeedReducer = handleActions(
@@ -68,6 +72,7 @@ function getStore(options, recorderConfig) {
       config: recorderConfig
     },
     attemptId: options.attemptid ? options.attemptid : null,
+    flower: options.flower,
     submissionSubmitted: false,
     quiz: {
       currentQuestionNumber: null,
