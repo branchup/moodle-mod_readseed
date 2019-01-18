@@ -16271,6 +16271,44 @@ SpeechBubble_SpeechBubble.propTypes = {
   size: prop_types_default.a.oneOf(['medium'])
 };
 /* harmony default export */ var components_SpeechBubble = (SpeechBubble_SpeechBubble);
+// CONCATENATED MODULE: ./components/Sprite.js
+
+
+
+var Sprite_Sprite = function Sprite(props) {
+  var _ref = [props.displayWidth || props.spriteWidth, props.displayHeight || props.spriteHeight],
+      displayWidth = _ref[0],
+      displayHeight = _ref[1];
+  var totalWidth = props.spriteWidth * props.spritesPerRow,
+      totalHeight = props.spriteHeight * Math.ceil(props.totalSprites / props.spritesPerRow);
+  var _ref2 = [Math.round(props.displayWidth / props.spriteWidth * totalWidth), Math.round(props.displayHeight / props.spriteHeight * totalHeight)],
+      backgroundWidth = _ref2[0],
+      backgroundHeight = _ref2[1];
+  var style = {
+    width: "".concat(displayWidth, "px"),
+    height: "".concat(displayHeight, "px"),
+    backgroundRepeat: 'no-repeat',
+    backgroundImage: "url(".concat(props.src, ")"),
+    backgroundPosition: "".concat(props.posX * -displayWidth, "px ").concat(props.posY * -displayHeight, "px"),
+    backgroundSize: "".concat(backgroundWidth, "px ").concat(backgroundHeight, "px")
+  };
+  return react_default.a.createElement("div", {
+    style: style
+  });
+};
+
+Sprite_Sprite.propTypes = {
+  src: prop_types_default.a.string.isRequired,
+  spriteWidth: prop_types_default.a.number.isRequired,
+  spriteHeight: prop_types_default.a.number.isRequired,
+  spritesPerRow: prop_types_default.a.number.isRequired,
+  totalSprites: prop_types_default.a.number.isRequired,
+  posX: prop_types_default.a.number.isRequired,
+  posY: prop_types_default.a.number.isRequired,
+  displayWidth: prop_types_default.a.number,
+  displayHeight: prop_types_default.a.number
+};
+/* harmony default export */ var components_Sprite = (Sprite_Sprite);
 // CONCATENATED MODULE: ./components/AnimatedSprites.js
 function AnimatedSprites_typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { AnimatedSprites_typeof = function _typeof(obj) { return typeof obj; }; } else { AnimatedSprites_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return AnimatedSprites_typeof(obj); }
 
@@ -16299,6 +16337,7 @@ function AnimatedSprites_setPrototypeOf(o, p) { AnimatedSprites_setPrototypeOf =
 function AnimatedSprites_assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function AnimatedSprites_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -16396,24 +16435,16 @@ function (_PureComponent) {
   }, {
     key: "render",
     value: function render() {
-      var _ref = [this.props.displayWidth || this.props.spriteWidth, this.props.displayHeight || this.props.spriteHeight],
-          displayWidth = _ref[0],
-          displayHeight = _ref[1];
-      var totalWidth = this.props.spriteWidth * this.props.spritesPerRow,
-          totalHeight = this.props.spriteHeight * Math.ceil(this.props.totalSprites / this.props.spritesPerRow);
-      var _ref2 = [Math.round(this.props.displayWidth / this.props.spriteWidth * totalWidth), Math.round(this.props.displayHeight / this.props.spriteHeight * totalHeight)],
-          backgroundWidth = _ref2[0],
-          backgroundHeight = _ref2[1];
-      var style = {
-        width: "".concat(displayWidth, "px"),
-        height: "".concat(displayHeight, "px"),
-        backgroundRepeat: 'no-repeat',
-        backgroundImage: "url(".concat(this.props.src, ")"),
-        backgroundPosition: "".concat(this.state.pos[0] * -displayWidth, "px ").concat(this.state.pos[1] * -displayHeight, "px"),
-        backgroundSize: "".concat(backgroundWidth, "px ").concat(backgroundHeight, "px")
-      };
-      return react_default.a.createElement("div", {
-        style: style
+      return react_default.a.createElement(components_Sprite, {
+        src: this.props.src,
+        spriteWidth: this.props.spriteWidth,
+        spriteHeight: this.props.spriteHeight,
+        spritesPerRow: this.props.spritesPerRow,
+        totalSprites: this.props.totalSprites,
+        posX: this.state.pos[0],
+        posY: this.state.pos[1],
+        displayWidth: this.props.displayWidth,
+        displayHeight: this.props.displayHeight
       });
     }
   }]);
@@ -16512,6 +16543,7 @@ var READY = 'ready';
 var LISTENING = 'listening';
 var SMH = 'smh';
 var THUMBS_UP = 'thumbs_up';
+var STATIC = 'static';
 // CONCATENATED MODULE: ./state/actions.js
 
 
@@ -16589,6 +16621,9 @@ var actions_makeMrSeedReady = function makeMrSeedReady() {
 var actions_makeMrSeedBloom = function makeMrSeedBloom() {
   return setMrSeedMode(BLOOM);
 };
+var actions_makeMrSeedStatic = function makeMrSeedStatic() {
+  return setMrSeedMode(STATIC);
+};
 var actions_wakeUpMrSeed = function wakeUpMrSeed() {
   return setMrSeedMode(WAKE_UP);
 };
@@ -16615,6 +16650,7 @@ function MrSeed_inherits(subClass, superClass) { if (typeof superClass !== "func
 function MrSeed_setPrototypeOf(o, p) { MrSeed_setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return MrSeed_setPrototypeOf(o, p); }
 
 function MrSeed_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -16718,9 +16754,6 @@ function (_React$PureComponent) {
               return _this.props.makeMrSeedReady();
             }
           }));
-        // case seed.LISTENING:
-        //   emoji = '🤭';
-        //   break;
 
         case SMH:
           return react_default.a.createElement(components_AnimatedSprites, MrSeed_extends({
@@ -16736,6 +16769,16 @@ function (_React$PureComponent) {
           }, commonProps, {
             spritesPerRow: 5,
             totalSprites: 20
+          }));
+
+        case STATIC:
+          return react_default.a.createElement(components_Sprite, MrSeed_extends({
+            src: idleUrl
+          }, commonProps, {
+            spritesPerRow: 5,
+            totalSprites: 20,
+            posX: 2,
+            posY: 1
           }));
 
         case READY:
@@ -16769,7 +16812,7 @@ function (_React$PureComponent) {
 }(react_default.a.PureComponent);
 
 MrSeed_defineProperty(MrSeed_MrSeed, "propTypes", {
-  mode: prop_types_default.a.oneOf([BLOOM, SLEEPING, WAKE_UP, READY, LISTENING, SMH, THUMBS_UP]).isRequired,
+  mode: prop_types_default.a.oneOf([BLOOM, SLEEPING, WAKE_UP, READY, LISTENING, STATIC, SMH, THUMBS_UP]).isRequired,
   width: prop_types_default.a.number,
   height: prop_types_default.a.number,
   bubbleSize: prop_types_default.a.string,
@@ -17034,7 +17077,7 @@ function (_React$PureComponent) {
         className: this.props.className
       }, react_default.a.createElement(components_ScrollView, null, react_default.a.createElement("div", {
         className: "mod_readseed-passage ".concat(blurred ? 'blurred' : '')
-      }, react_default.a.createElement("div", null, this.props.imageUrl ? react_default.a.createElement("div", {
+      }, react_default.a.createElement("div", null, this.props.showImage && this.props.imageUrl ? react_default.a.createElement("div", {
         className: "mod_readseed-passage-pic"
       }, react_default.a.createElement("img", {
         src: this.props.imageUrl,
@@ -17052,7 +17095,12 @@ Passage_defineProperty(Passage_Passage, "propTypes", {
   imageUrl: prop_types_default.a.string,
   blurred: prop_types_default.a.bool,
   style: prop_types_default.a.object,
-  className: prop_types_default.a.string
+  className: prop_types_default.a.string,
+  showImage: prop_types_default.a.bool
+});
+
+Passage_defineProperty(Passage_Passage, "defaultProps", {
+  showImage: true
 });
 
 var ConnectedPassage = connect_connect(function (state) {
@@ -17151,7 +17199,7 @@ function (_React$PureComponent) {
           startedAt: new Date()
         });
 
-        _this.props.makeMrSeedListen();
+        _this.props.makeMrSeedStatic();
       } else if (message.type === 'recording' && message.action === 'stopped') {
         var recordTime = new Date().getTime() - _this.state.startedAt.getTime();
 
@@ -17236,6 +17284,7 @@ function (_React$PureComponent) {
         style: {
           width: '100%'
         },
+        showImage: false,
         blurred: this.state.step === 'countdown'
       }));
     }
@@ -17372,6 +17421,7 @@ var ConnectedHome = connect_connect(function (state) {
     wakeUpMrSeed: actions_wakeUpMrSeed,
     makeMrSeedListen: actions_makeMrSeedListen,
     makeMrSeedReady: actions_makeMrSeedReady,
+    makeMrSeedStatic: actions_makeMrSeedStatic,
     makeMrSeedGiveThumbsUp: actions_makeMrSeedGiveThumbsUp
   }, dispatch);
 })(Home_Home);
@@ -17569,6 +17619,27 @@ Question_defineProperty(Question_Question, "propTypes", {
 });
 
 /* harmony default export */ var components_Question = (Question_Question);
+// CONCATENATED MODULE: ./components/Button.js
+
+
+
+var Button_Button = function Button(props) {
+  return react_default.a.createElement("a", {
+    href: "#",
+    className: "mod_readseed-btn ".concat(props.inactive ? 'inactive' : ''),
+    onClick: function onClick(e) {
+      e.preventDefault();
+      props.onClick();
+    }
+  }, props.children);
+};
+
+Button_Button.propTypes = {
+  onClick: prop_types_default.a.func.isRequired,
+  children: prop_types_default.a.any.isRequired,
+  inactive: prop_types_default.a.bool
+};
+/* harmony default export */ var components_Button = (Button_Button);
 // CONCATENATED MODULE: ./components/QuizQuestion.js
 function QuizQuestion_typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { QuizQuestion_typeof = function _typeof(obj) { return typeof obj; }; } else { QuizQuestion_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return QuizQuestion_typeof(obj); }
 
@@ -17589,6 +17660,7 @@ function QuizQuestion_setPrototypeOf(o, p) { QuizQuestion_setPrototypeOf = Objec
 function QuizQuestion_assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function QuizQuestion_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -17722,8 +17794,10 @@ function (_React$PureComponent) {
         onAnswerSelected: this.handleAnswerSelected
       })), react_default.a.createElement("div", {
         className: "mod_readseed-flex-col mod_readseed-flex-items-center"
-      }, react_default.a.createElement("div", null, react_default.a.createElement("button", {
-        className: "btn btn-default ".concat(this.state.shakeButton ? 'mod_readseed-shake' : ''),
+      }, react_default.a.createElement("div", {
+        className: "".concat(this.state.shakeButton ? 'mod_readseed-shake' : '')
+      }, react_default.a.createElement(components_Button, {
+        inactive: !this.props.selectedAnswer,
         onClick: this.handleNextClick
       }, getString('next'))), react_default.a.createElement("div", null, react_default.a.createElement(components_MrSeed, {
         height: 200
@@ -17911,7 +17985,7 @@ function (_React$PureComponent) {
         style: {
           flex: 2
         }
-      }, react_default.a.createElement("h3", null, getString('readagainandanswer', 'mod_readseed')), react_default.a.createElement(components_Passage, {
+      }, react_default.a.createElement("h3", null, getString('readagainandanswer', 'mod_readseed')), react_default.a.createElement("h4", null, this.props.title), react_default.a.createElement(components_Passage, {
         style: {
           flex: 1
         }
@@ -17953,7 +18027,8 @@ var ConnectedQuiz = connect_connect(function (state) {
     questions: state.options.quizdata,
     currentQuestionNumber: state.quiz.currentQuestionNumber || 1,
     answers: state.quiz.answers,
-    attemptId: state.attemptId
+    attemptId: state.attemptId,
+    title: state.options.name
   };
 }, function (dispatch) {
   return bindActionCreators({
@@ -18116,6 +18191,7 @@ function End_defineProperty(obj, key, value) { if (key in obj) { Object.definePr
 
 
 
+
 var End_End =
 /*#__PURE__*/
 function (_React$PureComponent) {
@@ -18152,6 +18228,8 @@ function (_React$PureComponent) {
   }, {
     key: "render",
     value: function render() {
+      var _this2 = this;
+
       return react_default.a.createElement("div", {
         className: "mod_readseed-flex-col mod_readseed-flex-items-center mod_readseed-flex-1"
       }, react_default.a.createElement(components_AssetsLoader, {
@@ -18165,9 +18243,10 @@ function (_React$PureComponent) {
         style: {
           margin: '20px'
         }
-      }, react_default.a.createElement("a", {
-        className: "btn btn-default",
-        href: this.props.finishUrl
+      }, react_default.a.createElement(components_Button, {
+        onClick: function onClick() {
+          return window.location.href = _this2.props.finishUrl;
+        }
       }, "Finish")));
     }
   }]);
