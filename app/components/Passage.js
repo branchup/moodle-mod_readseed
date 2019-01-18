@@ -11,7 +11,12 @@ class Passage extends React.PureComponent {
 
         blurred: PropTypes.bool,
         style: PropTypes.object,
-        className: PropTypes.string
+        className: PropTypes.string,
+        showImage: PropTypes.bool
+    };
+
+    static defaultProps = {
+        showImage: true
     };
 
     render() {
@@ -21,7 +26,7 @@ class Passage extends React.PureComponent {
                 <ScrollView>
                     <div className={`mod_readseed-passage ${blurred ? 'blurred' : ''}`}>
                         <div>
-                            {this.props.imageUrl ? (
+                            {this.props.showImage && this.props.imageUrl ? (
                                 <div className="mod_readseed-passage-pic">
                                     <img src={this.props.imageUrl} alt="" role="decoration" />
                                 </div>
@@ -35,6 +40,9 @@ class Passage extends React.PureComponent {
     }
 }
 
-const ConnectedPassage = connect(state => ({ text: state.options.passage, imageUrl: state.options.passagepictureurl }))(Passage);
+const ConnectedPassage = connect(state => ({
+    text: state.options.passage,
+    imageUrl: state.options.passagepictureurl
+}))(Passage);
 
 export default ConnectedPassage;
