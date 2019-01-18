@@ -510,6 +510,30 @@ div.mod_readseed_gradesadmin_cont {
     background-image: url([[pix:mod_readseed|incorrect]]);
 }
 
+.mod_readseed-btn,
+.mod_readseed-btn:hover,
+.mod_readseed-btn:focus,
+.mod_readseed-btn:visited,
+.mod_readseed-btn:active {
+    border-radius: 5px;
+    background: hsl(204, 86%, 53%);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 20px;
+    text-decoration: none;
+}
+
+.mod_readseed-btn.inactive,
+.mod_readseed-btn:hover.inactive,
+.mod_readseed-btn:focus.inactive,
+.mod_readseed-btn:visited.inactive,
+.mod_readseed-btn:active.inactive {
+    background: hsl(0, 0%, 96%);
+    color: hsl(0, 0%, 21%);
+}
+
 .mod_readseed-btn-recorder-like {
     border: 2px solid #000;
     border-radius: 5px;

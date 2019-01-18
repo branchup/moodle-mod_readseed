@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import MrSeed from '../components/MrSeed';
 import { getString } from '../lib/moodle';
 import Question from '../components/Question';
+import Button from '../components/Button';
 import { makeMrSeedReady, makeMrSeedShakeHead, makeMrSeedGiveThumbsUp } from '../state/actions';
 
 class QuizQuestion extends React.PureComponent {
@@ -114,13 +115,10 @@ class QuizQuestion extends React.PureComponent {
                     />
                 </div>
                 <div className="mod_readseed-flex-col mod_readseed-flex-items-center">
-                    <div>
-                        <button
-                            className={`btn btn-default ${this.state.shakeButton ? 'mod_readseed-shake' : ''}`}
-                            onClick={this.handleNextClick}
-                        >
+                    <div className={`${this.state.shakeButton ? 'mod_readseed-shake' : ''}`}>
+                        <Button inactive={!this.props.selectedAnswer} onClick={this.handleNextClick}>
                             {getString('next')}
-                        </button>
+                        </Button>
                     </div>
                     <div>
                         <MrSeed height={200} />

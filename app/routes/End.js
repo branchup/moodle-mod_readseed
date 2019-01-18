@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import MrSeed from '../components/MrSeed';
+import Button from '../components/Button';
 import AssetsLoader from '../components/AssetsLoader';
 import { getString } from '../lib/moodle';
 import { makeMrSeedBloom, makeMrSeedReady } from '../state/actions';
@@ -35,9 +36,7 @@ class End extends React.PureComponent {
                     <MrSeed height={500} />
                 </div>
                 <div style={{ margin: '20px' }}>
-                    <a className="btn btn-default" href={this.props.finishUrl}>
-                        Finish
-                    </a>
+                    <Button onClick={() => (window.location.href = this.props.finishUrl)}>Finish</Button>
                 </div>
             </div>
         );
