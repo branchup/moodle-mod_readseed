@@ -60,6 +60,7 @@ class Quiz extends React.PureComponent {
             <div className="mod_readseed-flex mod_readseed-flex-1">
                 <div className="mod_readseed-flex-col" style={{ flex: 2 }}>
                     <h3>{getString('readagainandanswer', 'mod_readseed')}</h3>
+                    <h4>{this.props.title}</h4>
                     <Passage style={{ flex: 1 }} />
                 </div>
                 <div className="mod_readseed-flex-1" style={{ marginLeft: '1em' }}>
@@ -87,7 +88,8 @@ const ConnectedQuiz = connect(
         questions: state.options.quizdata,
         currentQuestionNumber: state.quiz.currentQuestionNumber || 1,
         answers: state.quiz.answers,
-        attemptId: state.attemptId
+        attemptId: state.attemptId,
+        title: state.options.name
     }),
     dispatch => bindActionCreators({ setQuestionAnswer, setCurrentQuestionNumber, submitQuizResults }, dispatch)
 )(Quiz);
