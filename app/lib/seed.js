@@ -5,3 +5,4 @@ export const READY = 'ready';
 export const LISTENING = 'listening';
 export const SMH = 'smh';
 export const THUMBS_UP = 'thumbs_up';
+export const STATIC = 'static';

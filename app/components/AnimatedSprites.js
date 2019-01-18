@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import Sprite from './Sprite';
 
 class AnimatedSprites extends PureComponent {
     static propTypes = {
@@ -90,27 +91,19 @@ class AnimatedSprites extends PureComponent {
     }
 
     render() {
-        const [displayWidth, displayHeight] = [
-            this.props.displayWidth || this.props.spriteWidth,
-            this.props.displayHeight || this.props.spriteHeight
-        ];
-        const [totalWidth, totalHeight] = [
-            this.props.spriteWidth * this.props.spritesPerRow,
-            this.props.spriteHeight * Math.ceil(this.props.totalSprites / this.props.spritesPerRow)
-        ];
-        const [backgroundWidth, backgroundHeight] = [
-            Math.round((this.props.displayWidth / this.props.spriteWidth) * totalWidth),
-            Math.round((this.props.displayHeight / this.props.spriteHeight) * totalHeight)
-        ];
-        const style = {
-            width: `${displayWidth}px`,
-            height: `${displayHeight}px`,
-            backgroundRepeat: 'no-repeat',
-            backgroundImage: `url(${this.props.src})`,
-            backgroundPosition: `${this.state.pos[0] * -displayWidth}px ${this.state.pos[1] * -displayHeight}px`,
-            backgroundSize: `${backgroundWidth}px ${backgroundHeight}px`
-        };
-        return <div style={style} />;
+        return (
+            <Sprite
+                src={this.props.src}
+                spriteWidth={this.props.spriteWidth}
+                spriteHeight={this.props.spriteHeight}
+                spritesPerRow={this.props.spritesPerRow}
+                totalSprites={this.props.totalSprites}
+                posX={this.state.pos[0]}
+                posY={this.state.pos[1]}
+                displayWidth={this.props.displayWidth}
+                displayHeight={this.props.displayHeight}
+            />
+        );
     }
 }
 
